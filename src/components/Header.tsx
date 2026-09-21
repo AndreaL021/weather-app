@@ -1,5 +1,7 @@
 import { Image } from 'expo-image';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import Animated from 'react-native-reanimated';
 
 import { Colors, Fonts } from '@/constants/theme';
 
@@ -8,13 +10,16 @@ type HeaderProps = {
     onToggleMenu: () => void;
 };
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 export default function Header({ menuOpen, onToggleMenu }: HeaderProps) {
+    const [pressed, setPressed] = useState(false);
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 600;
 
     return (
         <View
-            style={[styles.container, { paddingHorizontal: isSmallScreen ? 0 : 100 }]}
+            style={[styles.container, { paddingHorizontal: isSmallScreen ? 0 : 70 }]}
         >
             <View style={styles.row}>
                 <View style={styles.logoContainer}>
@@ -26,12 +31,14 @@ export default function Header({ menuOpen, onToggleMenu }: HeaderProps) {
                     />
                 </View>
 
-                <Pressable
+                <AnimatedPressable
                     onPress={onToggleMenu}
                     accessibilityRole="button"
                     accessibilityLabel="Unità di misura"
                     accessibilityState={{ expanded: menuOpen }}
-                    style={({ pressed }) => [styles.unitsButton, pressed && styles.buttonPressed]}
+                    onPressIn={() => setPressed(true)}
+                    onPressOut={() => setPressed(false)}
+                    style={[styles.unitsButton, pressed && styles.buttonPressed]}
                 >
                     <Image
                         source={require('@/assets/images/icon-units.svg')}
@@ -44,9 +51,9 @@ export default function Header({ menuOpen, onToggleMenu }: HeaderProps) {
                         style={styles.arrow}
                         contentFit="contain"
                     />
-                </Pressable>
+                </AnimatedPressable>
             </View>
-
+            {/* Dropdown menu */}
             {menuOpen && (
                 <View style={styles.menu}>
                     <Text style={styles.menuText}>
@@ -71,7 +78,7 @@ const styles = StyleSheet.create({
     },
     logoContainer: {
         pointerEvents: 'none',
-        width: 200,
+        width: 150,
         flexShrink: 1,
     },
     logo: {
@@ -81,10 +88,9 @@ const styles = StyleSheet.create({
     unitsButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 10,
         backgroundColor: Colors.surface,
-        paddingHorizontal: 12,
-        minHeight: 44,
+        padding: 8,
         borderRadius: 8,
     },
     buttonPressed: {
@@ -92,16 +98,16 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontFamily: Fonts.body,
-        fontSize: 16,
+        fontSize: 12,
         color: Colors.text,
     },
     icon: {
-        width: 18,
-        height: 18,
-    },
-    arrow: {
         width: 12,
         height: 12,
+    },
+    arrow: {
+        width: 10,
+        height: 10,
     },
     menu: {
         alignSelf: 'flex-end',

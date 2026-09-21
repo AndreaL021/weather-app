@@ -1,4 +1,5 @@
 import Header from '@/components/Header';
+import SearchBar from '@/components/SearchBar';
 import { Colors, Fonts } from '@/constants/theme';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -9,11 +10,16 @@ export default function HomeScreen() {
 
     return (
         <View style={styles.screen}>
-            <SafeAreaView style={styles.container}>
-                <Text style={styles.title}>
-                    How’s the sky looking today?
-                </Text>
+
+            {/* Navbar */}
+            <SafeAreaView style={[StyleSheet.absoluteFill, styles.headerLayer]}>
+                <Header
+                    menuOpen={menuOpen}
+                    onToggleMenu={() => setMenuOpen(open => !open)}
+                />
             </SafeAreaView>
+
+            {/* chiusura Dropdown */}
             {menuOpen && (
                 <Pressable
                     style={[StyleSheet.absoluteFill, styles.backdrop]}
@@ -22,12 +28,14 @@ export default function HomeScreen() {
                     accessibilityLabel="Chiudi menu unità"
                 />
             )}
-            <SafeAreaView style={[StyleSheet.absoluteFill, styles.headerLayer]}>
-                <Header
-                    menuOpen={menuOpen}
-                    onToggleMenu={() => setMenuOpen(open => !open)}
-                />
+            {/* Home */}
+            <SafeAreaView style={styles.container}>
+                <Text style={styles.title}>
+                    How’s the sky looking today?
+                </Text>
+                <SearchBar />
             </SafeAreaView>
+
         </View>
     );
 }
@@ -43,9 +51,9 @@ const styles = StyleSheet.create({
         paddingVertical: 32,
     },
     title: {
-        marginTop: 92,
+        marginTop: 80,
         fontFamily: Fonts.heading,
-        fontSize: 48,
+        fontSize: 40,
         color: Colors.text,
         textAlign: 'center',
     },
