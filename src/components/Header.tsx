@@ -1,9 +1,10 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { Colors, Fonts } from '@/constants/theme';
+import { Colors } from '@/constants/theme';
+import AppText from './ui/AppText';
 
 type HeaderProps = {
     menuOpen: boolean;
@@ -45,7 +46,7 @@ export default function Header({ menuOpen, onToggleMenu }: HeaderProps) {
                         style={styles.icon}
                         contentFit="contain"
                     />
-                    <Text style={styles.buttonText}>Units</Text>
+                    <AppText style={styles.buttonText}>Units</AppText>
                     <Image
                         source={require('@/assets/images/icon-dropdown.svg')}
                         style={styles.arrow}
@@ -56,9 +57,9 @@ export default function Header({ menuOpen, onToggleMenu }: HeaderProps) {
             {/* Dropdown menu */}
             {menuOpen && (
                 <View style={styles.menu}>
-                    <Text style={styles.menuText}>
+                    <AppText style={styles.menuText}>
                         Qui aggiungeremo le unità di misura
-                    </Text>
+                    </AppText>
                 </View>
             )}
         </View>
@@ -97,9 +98,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.surfaceRaised,
     },
     buttonText: {
-        fontFamily: Fonts.body,
         fontSize: 12,
-        color: Colors.text,
     },
     icon: {
         width: 12,
@@ -118,8 +117,6 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.surface,
     },
     menuText: {
-        fontFamily: Fonts.body,
         fontSize: 16,
-        color: Colors.text,
     },
 });

@@ -1,5 +1,6 @@
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
+import WeatherOverview from '@/components/WeatherOverview/WeatherOverview';
 import { Colors, Fonts } from '@/constants/theme';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -28,12 +29,18 @@ export default function HomeScreen() {
                     accessibilityLabel="Chiudi menu unità"
                 />
             )}
+
             {/* Home */}
             <SafeAreaView style={styles.container}>
+
                 <Text style={styles.title}>
                     How’s the sky looking today?
                 </Text>
+
                 <SearchBar />
+
+                <WeatherOverview />
+
             </SafeAreaView>
 
         </View>

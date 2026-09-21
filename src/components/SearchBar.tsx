@@ -1,15 +1,25 @@
 import { Colors, Fonts } from '@/constants/theme';
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import type { TextStyle } from 'react-native';
+import { Platform, Pressable, StyleSheet, TextInput, View, useWindowDimensions } from 'react-native';
 import Animated from 'react-native-reanimated';
+import AppText from './ui/AppText';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
+// Proprietà CSS applicate solo all'input web, senza modificare global.css.
+// I tipi nativi non includono outlineStyle: 'none' e caretColor del browser.
+const webInputStyle = {
+    outlineStyle: 'none' as const,
+    caretColor: Colors.text,
+} as unknown as TextStyle;
+
 export default function SearchBar() {
     const [pressed, setPressed] = useState(false);
+    const [inputFocused, setInputFocused] = useState(false);
     const { width } = useWindowDimensions();
-    const isSmallScreen = width < 576;
+    const isSmallScreen = width < 600;
 
     return (
         <View style={[styles.row, isSmallScreen ? styles.mobileRow : styles.desktopRow]}>
@@ -21,8 +31,11 @@ export default function SearchBar() {
                     accessible={false}
                 />
                 <TextInput
-                    style={styles.text}
-                    placeholder="Search for a place..."
+                    underlineColorAndroid='transparent'
+                    style={[styles.text, Platform.OS === 'web' && webInputStyle]}
+                    placeholder={inputFocused ? '' : 'Search for a place...'}
+                    onFocus={() => setInputFocused(true)}
+                    onBlur={() => setInputFocused(false)}
                     placeholderTextColor={Colors.textMuted}
                     accessibilityLabel="Città da cercare"
                     returnKeyType="search"
@@ -32,10 +45,10 @@ export default function SearchBar() {
                 accessibilityRole="button"
                 accessibilityLabel="Cerca"
                 onPressIn={() => setPressed(true)}
-                    onPressOut={() => setPressed(false)}
-                    style={[styles.button, pressed && styles.buttonPressed]}
+                onPressOut={() => setPressed(false)}
+                style={[styles.button, pressed && styles.buttonPressed]}
             >
-                <Text style={styles.textBtn}>Search</Text>
+                <AppText style={styles.textBtn}>Search</AppText>
             </AnimatedPressable>
         </View>
     );
@@ -85,12 +98,10 @@ const styles = StyleSheet.create({
         minWidth: 0,
         fontSize: 15,
         color: Colors.text,
-        fontFamily: Fonts.body,
+        fontFamily: Fonts.body
     },
     textBtn: {
         fontSize: 15,
-        fontFamily: Fonts.body,
-        color: Colors.text,
     },
     magnify: {
         width: 15,
