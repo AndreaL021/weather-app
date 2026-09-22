@@ -11,18 +11,21 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 export default function WeatherOverview() {
 
     const { width } = useWindowDimensions();
-    const isSmallScreen = width < 600;
-    const isMediumScreen = width < 768;
+    // const sideBar = width < 900;
+    const isSmallScreen = width < 800;
+    const isMediumScreen = width < 1000;
 
     return (
-        <View style={[styles.container, isSmallScreen ? styles.mobile : styles.desktop, {width: isSmallScreen ? '100%' : isMediumScreen ? '90%' : '80%'}]}>
-            <View style={[styles.main, !isSmallScreen && styles.mainDesktop]}>
+        <View style={[styles.container, isMediumScreen ? styles.mobile : styles.desktop, { width: isSmallScreen ? '100%' : isMediumScreen ? '70%' : '80%' }]}>
+            <View style={[styles.main, !isMediumScreen && styles.mainDesktop]}>
                 <CurrentWeather />
                 <WeatherDetails />
                 <DailyForecast />
             </View>
-            <View style={!isSmallScreen && styles.sidebarDesktop}>
-                <HourlyForecast />
+            <View style={!isMediumScreen && styles.sidebarDesktop}>
+                <View style={!isMediumScreen && StyleSheet.absoluteFill}>
+                    <HourlyForecast fillHeight={!isMediumScreen} />
+                </View>
             </View>
         </View>
     );
@@ -40,6 +43,7 @@ const styles = StyleSheet.create({
     },
     mobile: {
         flexDirection: 'column',
+        paddingBottom: 24,
     },
     main: {
         gap: 12,
@@ -49,7 +53,7 @@ const styles = StyleSheet.create({
         minWidth: 0,
     },
     sidebarDesktop: {
-        flex: 4,
+        flex: 3,
         minWidth: 0,
     },
 });

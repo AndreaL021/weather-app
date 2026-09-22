@@ -45,7 +45,7 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
                                 onPress={() => { onChange?.(option.value); close(); }}
                                 style={({ pressed }) => [styles.option, option.value === value && styles.selected, pressed && styles.pressed]}
                             >
-                                <AppText style={styles.text}>{option.label}</AppText>
+                                <AppText>{option.label}</AppText>
                                 {option.value === value && <Image source={require('@/assets/images/icon-checkmark.svg')} style={styles.check} accessible={false} />}
                             </Pressable>
                         ))}
@@ -66,7 +66,7 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
             style={({ pressed }) => [styles.button, variant === 'raised' && styles.raised, pressed && styles.pressed]}
         >
             {icon && <Image source={icon} style={styles.icon} contentFit="contain" accessible={false} />}
-            <AppText style={styles.text}>{label}</AppText>
+            <AppText>{label}</AppText>
             <Image source={require('@/assets/images/icon-dropdown.svg')} style={styles.arrow} contentFit="contain" accessible={false} />
         </Pressable>
     );
@@ -75,7 +75,6 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
 const styles = StyleSheet.create({
     button: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, backgroundColor: Colors.surface, padding: 8, borderRadius: 8 },
     raised: { backgroundColor: Colors.border },
-    text: { fontSize: 12 },
     icon: { width: 12, height: 12 },
     arrow: { width: 10, height: 10 },
     check: { width: 14, height: 14 },

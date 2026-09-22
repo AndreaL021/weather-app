@@ -10,5 +10,6 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: Fonts.body,
     color: Colors.text,
+    fontSize: 12
   },
 });

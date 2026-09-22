@@ -19,7 +19,7 @@ export default function SearchBar() {
     const [pressed, setPressed] = useState(false);
     const [inputFocused, setInputFocused] = useState(false);
     const { width } = useWindowDimensions();
-    const isSmallScreen = width < 600;
+    const isSmallScreen = width < 375;
 
     return (
         <View style={[styles.row, isSmallScreen ? styles.mobileRow : styles.desktopRow]}>
@@ -56,7 +56,7 @@ export default function SearchBar() {
 
 const styles = StyleSheet.create({
     row: {
-        marginTop: 32,
+        marginTop: 20,
         alignSelf: 'center',
         gap: 12,
     },
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     },
     desktopRow: {
         width: '50%',
-        minWidth: 480,
+        minWidth: 350,
         flexDirection: 'row',
     },
     container: {
@@ -96,12 +96,10 @@ const styles = StyleSheet.create({
     text: {
         flex: 1,
         minWidth: 0,
-        fontSize: 15,
         color: Colors.text,
         fontFamily: Fonts.body
     },
     textBtn: {
-        fontSize: 15,
     },
     magnify: {
         width: 15,

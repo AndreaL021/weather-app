@@ -53,7 +53,6 @@ const styles = StyleSheet.create({
         height: 40,
     },
     menuText: {
-        fontSize: 12,
         padding: 8,
     },
 });

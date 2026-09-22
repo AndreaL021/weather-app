@@ -22,22 +22,22 @@ export default function CurrentWeather() {
             />
             
             <View style={isSmallScreen ? styles.column : styles.row}>
-                <View style={styles.textCenter}>
-                    <AppText>
-                        current weather
+                <View style={isSmallScreen && styles.textCenter}>
+                    <AppText style={{ fontSize: 16 }}>
+                        Rome
                     </AppText>
                     <AppText style={{ color: Colors.textSecondary }}>
-                        current weather
+                        Tuesday, Sep 22, 2026
                     </AppText>
                 </View>
                 <View style={styles.row}>
                     <Image
                         source={require('@/assets/images/icon-sunny.webp')}
-                        style={[styles.image, { aspectRatio: 1 }]}
+                        style={[styles.image, { aspectRatio: isSmallScreen? 0.6 :1 }]}
                         contentFit="contain"
                         accessibilityLabel="Weather Now"
                     />
-                    <AppText style={{ fontSize: 40 }}>
+                    <AppText style={{ fontSize: 60 }}>
                         20°
                     </AppText>
                 </View>

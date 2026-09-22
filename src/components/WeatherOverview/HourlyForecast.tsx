@@ -20,11 +20,24 @@ const hourlyForecast = [
     { time: '10 PM', temperature: 17, condition: 'Nuvoloso', icon: require('@/assets/images/icon-overcast.webp') },
 ];
 
-export default function HourlyForecast() {
+export default function HourlyForecast({ fillHeight = false }: { fillHeight?: boolean }) {
+
     const [selectedDay, setSelectedDay] = useState('Tuesday');
 
+
+    // CARD
+    const cards = hourlyForecast.map(hour => (
+        <View key={hour.time} style={styles.card}>
+            <View style={styles.hour}>
+                <Image source={hour.icon} style={styles.icon} contentFit="contain" accessibilityLabel={hour.condition} />
+                <AppText>{hour.time}</AppText>
+            </View>
+            <AppText style={{ color: Colors.textSecondary }}>{hour.temperature}°</AppText>
+        </View>
+    ));
+
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, fillHeight && styles.fill]}>
             <View style={styles.header}>
                 <AppText style={styles.title}>Hourly forecast</AppText>
                 <Select
@@ -36,26 +49,22 @@ export default function HourlyForecast() {
                     onChange={setSelectedDay}
                 />
             </View>
-            {hourlyForecast.map(hour => (
-                <View key={hour.time} style={styles.card}>
-                    <View style={styles.hour}>
-                        <Image source={hour.icon} style={styles.icon} contentFit="contain" accessibilityLabel={hour.condition} />
-                        <AppText>{hour.time}</AppText>
-                    </View>
-                    <AppText>{hour.temperature}°</AppText>
-                </View>
-            ))}
+            <View style={[styles.hours, fillHeight && styles.hoursFill]}>{cards}</View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    fill: { flex: 1, minHeight: 0 },
+    hours: { gap: 12 },
+    hoursFill: { flexGrow: 1, justifyContent: 'space-between' },
     card: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 12,
-        padding: 8,
+        padding: 3,
+        paddingHorizontal: 10,
         borderRadius: 8,
         backgroundColor: Colors.surfaceRaised,
     },
@@ -69,18 +78,19 @@ const styles = StyleSheet.create({
         height: 28,
     },
     container: {
-        padding: 16,
+        padding: 10,
         borderRadius: 12,
         backgroundColor: Colors.surface,
         flexDirection: 'column',
         gap: 12,
     },
     header: {
+        flexShrink: 0,
         flexDirection: 'row',
         flexWrap: 'wrap',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 12,
     },
-    title: { flexShrink: 1 },
+    title: { flexShrink: 1, fontSize: 14 },
 });
