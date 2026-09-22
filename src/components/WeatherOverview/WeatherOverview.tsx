@@ -12,30 +12,44 @@ export default function WeatherOverview() {
 
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 600;
+    const isMediumScreen = width < 768;
 
     return (
-        <View style={[styles.row, isSmallScreen ? styles.mobileRow : styles.desktopRow]}>
-            <CurrentWeather />
-            <WeatherDetails />
-            <DailyForecast />
-            <HourlyForecast />
+        <View style={[styles.container, isSmallScreen ? styles.mobile : styles.desktop, {width: isSmallScreen ? '100%' : isMediumScreen ? '90%' : '80%'}]}>
+            <View style={[styles.main, !isSmallScreen && styles.mainDesktop]}>
+                <CurrentWeather />
+                <WeatherDetails />
+                <DailyForecast />
+            </View>
+            <View style={!isSmallScreen && styles.sidebarDesktop}>
+                <HourlyForecast />
+            </View>
         </View>
     );
 }
 
 
 const styles = StyleSheet.create({
-    row: {
+    container: {
         marginTop: 32,
         alignSelf: 'center',
-        gap: 12,
-        display: 'flex',
+        gap: 15,
+    },
+    desktop: {
+        flexDirection: 'row',
+    },
+    mobile: {
         flexDirection: 'column',
     },
-    mobileRow: {
-        width: '100%',
+    main: {
+        gap: 12,
     },
-    desktopRow: {
-        width: '90%',
+    mainDesktop: {
+        flex: 7,
+        minWidth: 0,
+    },
+    sidebarDesktop: {
+        flex: 4,
+        minWidth: 0,
     },
 });

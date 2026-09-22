@@ -48,4 +48,3 @@ export const FontAssets = {
 };
 
 export const FontSizes = { body: 18 } as const;
-

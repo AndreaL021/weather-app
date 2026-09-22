@@ -43,7 +43,7 @@ export default function SearchBar() {
             </View>
             <AnimatedPressable
                 accessibilityRole="button"
-                accessibilityLabel="Cerca"
+                accessibilityLabel="search"
                 onPressIn={() => setPressed(true)}
                 onPressOut={() => setPressed(false)}
                 style={[styles.button, pressed && styles.buttonPressed]}

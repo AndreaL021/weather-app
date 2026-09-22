@@ -1,46 +1,40 @@
 import Header from '@/components/Header';
 import SearchBar from '@/components/SearchBar';
 import WeatherOverview from '@/components/WeatherOverview/WeatherOverview';
+import SelectProvider, { useSelectMenu } from '@/components/ui/SelectProvider';
 import { Colors, Fonts } from '@/constants/theme';
-import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
-    const [menuOpen, setMenuOpen] = useState(false);
+    return <SelectProvider><HomeContent /></SelectProvider>;
+}
+
+function HomeContent() {
+    const { closeMenu } = useSelectMenu();
 
     return (
         <View style={styles.screen}>
 
             {/* Navbar */}
-            <SafeAreaView style={[StyleSheet.absoluteFill, styles.headerLayer]}>
-                <Header
-                    menuOpen={menuOpen}
-                    onToggleMenu={() => setMenuOpen(open => !open)}
-                />
+            <SafeAreaView edges={['top', 'left', 'right']} style={styles.headerLayer}>
+                <Header />
             </SafeAreaView>
 
-            {/* chiusura Dropdown */}
-            {menuOpen && (
-                <Pressable
-                    style={[StyleSheet.absoluteFill, styles.backdrop]}
-                    onPress={() => setMenuOpen(false)}
-                    accessibilityRole="button"
-                    accessibilityLabel="Chiudi menu unità"
-                />
-            )}
 
             {/* Home */}
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
+                <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled"
+                    onScrollBeginDrag={closeMenu} onScroll={closeMenu} scrollEventThrottle={16}>
 
-                <Text style={styles.title}>
-                    How’s the sky looking today?
-                </Text>
+                    <Text style={styles.title}>
+                        How’s the sky looking today?
+                    </Text>
 
-                <SearchBar />
+                    <SearchBar />
 
-                <WeatherOverview />
-
+                    <WeatherOverview />
+                </ScrollView>
             </SafeAreaView>
 
         </View>
@@ -50,28 +44,26 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: Colors.background,
     },
     container: {
         flex: 1,
+    },
+    content: {
         paddingHorizontal: 24,
-        paddingVertical: 32,
     },
     title: {
-        marginTop: 80,
         fontFamily: Fonts.heading,
         fontSize: 40,
         color: Colors.text,
         textAlign: 'center',
     },
     headerLayer: {
+        flexShrink: 0,
         pointerEvents: 'box-none',
         zIndex: 2,
         paddingHorizontal: 24,
-        paddingVertical: 32,
-    },
-    backdrop: {
-        zIndex: 1,
-        cursor: 'auto' as const,
+        paddingVertical: 5,
+        backgroundColor: 'transparent',
+       
     },
 });
