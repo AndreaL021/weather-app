@@ -1,7 +1,7 @@
 import { Image } from 'expo-image';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
-import AppText from './ui/AppText';
-import Select from './ui/Select';
+import Select from '../ui/Select';
+import DropdownMenu from './DropdownMenu';
 
 export default function Header() {
     const { width } = useWindowDimensions();
@@ -10,6 +10,7 @@ export default function Header() {
     return (
         <View style={[styles.container, { paddingHorizontal: isSmallScreen ? 0 : 70 }]}>
             <View style={styles.row}>
+                {/* logo */}
                 <View style={styles.logoContainer}>
                     <Image
                         source={require('@/assets/images/logo.svg')}
@@ -18,15 +19,15 @@ export default function Header() {
                         accessibilityLabel="Weather Now"
                     />
                 </View>
+                {/* select */}
                 <Select
                     label="Units"
                     accessibilityLabel="Unità di misura"
                     icon={require('@/assets/images/icon-units.svg')}
                     menuWidth={240}
                 >
-                    <AppText style={styles.menuText}>
-                        Qui aggiungeremo le unità di misura
-                    </AppText>
+                    {/* menu personalizzato */}
+                    <DropdownMenu />
                 </Select>
             </View>
         </View>
@@ -52,7 +53,5 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 40,
     },
-    menuText: {
-        padding: 8,
-    },
 });
+

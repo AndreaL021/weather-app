@@ -2,6 +2,23 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## Local weather
+
+On startup the app asks for foreground location permission and loads current weather,
+seven daily forecasts and hourly forecasts from Open-Meteo. Coordinates are rounded
+to two decimal places before being sent to the weather service; there is no background tracking.
+The same current coordinates are sent to BigDataCloud's client-side reverse geocoding
+service to display the city and country. If that lookup fails, the local forecast still
+loads with the label “Current location”. The service receives the requesting IP address
+alongside the coordinates (https://www.bigdatacloud.com/docs/article/why-is-reverse-geocoding-api-free).
+If permission is denied or the position cannot be obtained, the app clearly labels Rome
+as the fallback. Network failures show a retry button instead of demo data.
+
+On web, geolocation requires HTTPS or localhost and browser permission. On a phone,
+enable location services and allow the app to access your location. Expo Go supports
+expo-location; existing standalone/development builds need rebuilding after adding it.
+To test the first-visit prompt again, reset the site's/app's location permission.
+
 ## Get started
 
 1. Install dependencies

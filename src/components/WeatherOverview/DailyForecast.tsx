@@ -1,38 +1,44 @@
 import AppText from '@/components/ui/AppText';
 import { Colors } from '@/constants/theme';
+import { useUnits } from '@/contexts/UnitsContext';
+import { useWeather } from '@/contexts/WeatherContext';
+import { dayLabel, weatherIcon } from '@/services/weather';
 import { Image } from 'expo-image';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
-// Dati dimostrativi del design.
-const forecast = [
-    { day: 'Tue', high: 20, low: 14, condition: 'Pioviggine', icon: require('@/assets/images/icon-drizzle.webp') },
-    { day: 'Wed', high: 21, low: 15, condition: 'Pioggia', icon: require('@/assets/images/icon-rain.webp') },
-    { day: 'Thu', high: 24, low: 14, condition: 'Soleggiato', icon: require('@/assets/images/icon-sunny.webp') },
-    { day: 'Fri', high: 25, low: 13, condition: 'Parzialmente nuvoloso', icon: require('@/assets/images/icon-partly-cloudy.webp') },
-    { day: 'Sat', high: 21, low: 15, condition: 'Temporale', icon: require('@/assets/images/icon-storm.webp') },
-    { day: 'Sun', high: 25, low: 16, condition: 'Neve', icon: require('@/assets/images/icon-snow.webp') },
-    { day: 'Mon', high: 24, low: 15, condition: 'Nebbia', icon: require('@/assets/images/icon-fog.webp') },
-];
-
 export default function DailyForecast() {
+    const { temperature } = useUnits();
     const { width } = useWindowDimensions();
     const isMediumScreen = width < 576;
     const isSmallScreen = width < 375;
+    const { data } = useWeather();
+    if (!data) return null;
+    const daily = data.weather.daily;
+    const forecast = daily.time.map((date, index) => ({
+        date, day: dayLabel(date), high: daily.temperature_2m_max[index],
+        low: daily.temperature_2m_min[index], ...weatherIcon(daily.weather_code[index]),
+    }));
+
+    const columns = isSmallScreen ? 3 : isMediumScreen ? 4 : 7;
+    const rows = Array.from({ length: Math.ceil(forecast.length / columns) }, (_, index) => forecast.slice(index * columns, (index + 1) * columns));
 
     return (
         <View style={styles.container}>
             <AppText style={styles.title}>Daily forecast</AppText>
-            <View style={[styles.row, isMediumScreen && styles.mobileRow]}>
-                {forecast.map(day => (
-                    <View key={day.day} style={[styles.card, isMediumScreen && styles.mobileCard, isSmallScreen && styles.smallCard]}>
+            <View style={styles.rows}>
+                {rows.map((row, index) => <View key={index} style={styles.row}>
+                {row.map(day => (
+                    <View key={day.date} style={styles.card}>
                         <AppText style={styles.day}>{day.day}</AppText>
                         <Image source={day.icon} style={styles.icon} contentFit="contain" accessibilityLabel={day.condition} />
                         <View style={styles.temperatures}>
-                            <AppText style={styles.temperature} accessibilityLabel={`Massima ${day.high} gradi`}>{day.high}°</AppText>
-                            <AppText style={[styles.temperature, styles.low]} accessibilityLabel={`Minima ${day.low} gradi`}>{day.low}°</AppText>
+                            <AppText style={styles.temperature} accessibilityLabel={`Massima ${temperature(day.high, true)}`}>{temperature(day.high)}</AppText>
+                            <AppText style={[styles.temperature, styles.low]} accessibilityLabel={`Minima ${temperature(day.low, true)}`}>{temperature(day.low)}</AppText>
                         </View>
                     </View>
                 ))}
+                {Array.from({ length: columns - row.length }, (_, index) => <View key={`empty-${index}`} style={styles.emptyCard} />)}
+                </View>)}
             </View>
         </View>
     );
@@ -49,7 +55,8 @@ const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: Colors.surfaceRaised,
-        width: '13%',
+        flex: 1,
+        minWidth: 0,
         padding: 10,
         borderRadius: 8,
         borderWidth: 1,
@@ -69,20 +76,7 @@ const styles = StyleSheet.create({
     },
     temperature: { fontSize: 12 },
     low: { color: Colors.textSecondary },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    mobileRow: {
-        flexWrap: 'wrap',
-        justifyContent: 'flex-start',
-        columnGap: '2%',
-        rowGap: 12,
-    },
-    mobileCard: {
-        width: '23.5%',
-    },
-    smallCard: {
-        width: '32%',
-    },
+    rows: { gap: 12 },
+    row: { flexDirection: 'row', gap: 10 },
+    emptyCard: { flex: 1, minWidth: 0, padding: 10, borderWidth: 1, borderColor: 'transparent' },
 });

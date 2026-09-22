@@ -3,11 +3,22 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import AppText from '../ui/AppText';
 
 import { Colors } from '@/constants/theme';
+import { useUnits } from '@/contexts/UnitsContext';
+import { useWeather } from '@/contexts/WeatherContext';
+import { weatherIcon } from '@/services/weather';
 
 export default function CurrentWeather() {
+    const { temperature } = useUnits();
 
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 375;
+    const { data } = useWeather();
+    if (!data) return null;
+    const current = data.weather.current;
+    const icon = weatherIcon(current.weather_code);
+    const date = new Date(`${current.time.slice(0, 10)}T12:00:00Z`).toLocaleDateString('en-US', {
+        weekday: 'long', month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC',
+    });
 
     return (
         <View style={[styles.container]}>
@@ -24,21 +35,21 @@ export default function CurrentWeather() {
             <View style={isSmallScreen ? styles.column : styles.row}>
                 <View style={isSmallScreen && styles.textCenter}>
                     <AppText style={{ fontSize: 16 }}>
-                        Rome
+                        {data.place}
                     </AppText>
                     <AppText style={{ color: Colors.textSecondary }}>
-                        Tuesday, Sep 22, 2026
+                        {date}
                     </AppText>
                 </View>
                 <View style={styles.row}>
                     <Image
-                        source={require('@/assets/images/icon-sunny.webp')}
+                        source={icon.icon}
                         style={[styles.image, { aspectRatio: isSmallScreen? 0.6 :1 }]}
                         contentFit="contain"
-                        accessibilityLabel="Weather Now"
+                        accessibilityLabel={icon.condition}
                     />
                     <AppText style={{ fontSize: 60 }}>
-                        20°
+                        {temperature(current.temperature_2m)}
                     </AppText>
                 </View>
             </View>

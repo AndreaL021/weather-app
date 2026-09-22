@@ -1,38 +1,39 @@
 import AppText from '@/components/ui/AppText';
 import Select from '@/components/ui/Select';
 import { Colors } from '@/constants/theme';
+import { useUnits } from '@/contexts/UnitsContext';
+import { useWeather } from '@/contexts/WeatherContext';
+import { dayLabel, weatherIcon } from '@/services/weather';
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-
-const days = ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday'];
-const dayOptions = days.map(day => ({ label: day, value: day }));
-
-// Dati di esempio: verranno sostituiti con le previsioni del giorno selezionato.
-const hourlyForecast = [
-    { time: '3 PM', temperature: 20, condition: 'Nuvoloso', icon: require('@/assets/images/icon-overcast.webp') },
-    { time: '4 PM', temperature: 20, condition: 'Parzialmente nuvoloso', icon: require('@/assets/images/icon-partly-cloudy.webp') },
-    { time: '5 PM', temperature: 20, condition: 'Soleggiato', icon: require('@/assets/images/icon-sunny.webp') },
-    { time: '6 PM', temperature: 19, condition: 'Nuvoloso', icon: require('@/assets/images/icon-overcast.webp') },
-    { time: '7 PM', temperature: 18, condition: 'Neve', icon: require('@/assets/images/icon-snow.webp') },
-    { time: '8 PM', temperature: 18, condition: 'Nebbia', icon: require('@/assets/images/icon-fog.webp') },
-    { time: '9 PM', temperature: 17, condition: 'Neve', icon: require('@/assets/images/icon-snow.webp') },
-    { time: '10 PM', temperature: 17, condition: 'Nuvoloso', icon: require('@/assets/images/icon-overcast.webp') },
-];
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 export default function HourlyForecast({ fillHeight = false }: { fillHeight?: boolean }) {
+    const { temperature } = useUnits();
 
-    const [selectedDay, setSelectedDay] = useState('Tuesday');
+    const [selectedDay, setSelectedDay] = useState('');
+    const { data } = useWeather();
+    if (!data) return null;
+    const { daily, hourly } = data.weather;
+    const dayOptions = daily.time.map(date => ({ value: date, label: dayLabel(date, true) }));
+    const activeDay = daily.time.includes(selectedDay) ? selectedDay : daily.time[0];
+    const hourlyForecast = hourly.time.map((time, index) => {
+        const hour = Number(time.slice(11, 13));
+        return {
+            dateTime: time, time: (hour % 12 || 12) + (hour < 12 ? ' AM' : ' PM'),
+            temperature: hourly.temperature_2m[index], ...weatherIcon(hourly.weather_code[index]),
+        };
+    }).filter(hour => hour.dateTime.startsWith(activeDay));
 
 
     // CARD
     const cards = hourlyForecast.map(hour => (
-        <View key={hour.time} style={styles.card}>
+        <View key={hour.dateTime} style={styles.card}>
             <View style={styles.hour}>
                 <Image source={hour.icon} style={styles.icon} contentFit="contain" accessibilityLabel={hour.condition} />
                 <AppText>{hour.time}</AppText>
             </View>
-            <AppText style={{ color: Colors.textSecondary }}>{hour.temperature}°</AppText>
+            <AppText style={{ color: Colors.textSecondary }}>{temperature(hour.temperature)}</AppText>
         </View>
     ));
 
@@ -41,15 +42,22 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
             <View style={styles.header}>
                 <AppText style={styles.title}>Hourly forecast</AppText>
                 <Select
-                    label={selectedDay}
-                    accessibilityLabel={`Giorno delle previsioni: ${selectedDay}`}
+                    label={dayLabel(activeDay, true)}
+                    accessibilityLabel={`Giorno delle previsioni: ${dayLabel(activeDay, true)}`}
                     variant="raised"
                     options={dayOptions}
-                    value={selectedDay}
+                    value={activeDay}
                     onChange={setSelectedDay}
                 />
             </View>
-            <View style={[styles.hours, fillHeight && styles.hoursFill]}>{cards}</View>
+            {fillHeight ? (
+                <ScrollView key={activeDay} style={styles.fill} contentContainerStyle={styles.hours}
+                    keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator>
+                    {cards}
+                </ScrollView>
+            ) : (
+                <View style={styles.hours}>{cards}</View>
+            )}
         </View>
     );
 }
@@ -57,8 +65,8 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
 const styles = StyleSheet.create({
     fill: { flex: 1, minHeight: 0 },
     hours: { gap: 12 },
-    hoursFill: { flexGrow: 1, justifyContent: 'space-between' },
     card: {
+        flexShrink: 0,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',

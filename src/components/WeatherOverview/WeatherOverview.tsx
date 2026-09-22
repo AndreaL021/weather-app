@@ -34,7 +34,7 @@ export default function WeatherOverview() {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 32,
+        marginTop: 20,
         alignSelf: 'center',
         gap: 15,
     },

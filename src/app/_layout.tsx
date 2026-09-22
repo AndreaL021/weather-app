@@ -7,6 +7,9 @@ import { useEffect } from 'react';
 
 import { Colors, FontAssets } from '@/constants/theme';
 
+import UnitsProvider from '@/contexts/UnitsContext';
+import WeatherProvider from '@/contexts/WeatherContext';
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -27,6 +30,8 @@ export default function RootLayout() {
     }
 
     return (
+        <UnitsProvider>
+        <WeatherProvider>
         <Stack
             screenOptions={{
                 headerShown: false,
@@ -35,5 +40,7 @@ export default function RootLayout() {
                 },
             }}
         />
+        </WeatherProvider>
+        </UnitsProvider>
     );
 }

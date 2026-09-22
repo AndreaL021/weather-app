@@ -1,13 +1,19 @@
 import AppText from '@/components/ui/AppText';
 import { Colors } from '@/constants/theme';
+import { useUnits } from '@/contexts/UnitsContext';
+import { useWeather } from '@/contexts/WeatherContext';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 
 
 export default function WeatherDetails() {
+    const { temperature, wind, precipitation } = useUnits();
 
     const { width } = useWindowDimensions();
     const isMediumScreen = width < 576;
+    const { data } = useWeather();
+    if (!data) return null;
+    const current = data.weather.current;
 
 
     return (
@@ -17,7 +23,7 @@ export default function WeatherDetails() {
                     Feels Like
                 </AppText>
                 <AppText style={{marginTop: 15, fontSize: 16}}>
-                    22°C
+                    {temperature(current.apparent_temperature, true)}
                 </AppText>
             </View>
             <View style={[styles.card, isMediumScreen && styles.gridCard]}>
@@ -25,7 +31,7 @@ export default function WeatherDetails() {
                     Humidity
                 </AppText>
                 <AppText style={{marginTop: 15, fontSize: 16}}>
-                    60%
+                    {current.relative_humidity_2m}%
                 </AppText>
             </View>
             <View style={[styles.card, isMediumScreen && styles.gridCard]}>
@@ -33,7 +39,7 @@ export default function WeatherDetails() {
                     Wind
                 </AppText>
                 <AppText style={{marginTop: 15, fontSize: 16}}>
-                    10 km/h
+                    {wind(current.wind_speed_10m)}
                 </AppText>
             </View>
             <View style={[styles.card, isMediumScreen && styles.gridCard]}>
@@ -41,7 +47,7 @@ export default function WeatherDetails() {
                     Precipitation
                 </AppText>
                 <AppText style={{marginTop: 15, fontSize: 16}}>
-                    0 mm
+                    {precipitation(current.precipitation)}
                 </AppText>
             </View>
         </View>

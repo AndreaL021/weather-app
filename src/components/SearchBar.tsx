@@ -2,11 +2,10 @@ import { Colors, Fonts } from '@/constants/theme';
 import { Image } from 'expo-image';
 import { useState } from 'react';
 import type { TextStyle } from 'react-native';
-import { Platform, Pressable, StyleSheet, TextInput, View, useWindowDimensions } from 'react-native';
-import Animated from 'react-native-reanimated';
+import { Platform, StyleSheet, TextInput, View, useWindowDimensions } from 'react-native';
 import AppText from './ui/AppText';
+import InteractivePressable, { focusStyle } from './ui/InteractivePressable';
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 // Proprietà CSS applicate solo all'input web, senza modificare global.css.
 // I tipi nativi non includono outlineStyle: 'none' e caretColor del browser.
@@ -16,14 +15,17 @@ const webInputStyle = {
 } as unknown as TextStyle;
 
 export default function SearchBar() {
-    const [pressed, setPressed] = useState(false);
+    const [inputHovered, setInputHovered] = useState(false);
     const [inputFocused, setInputFocused] = useState(false);
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 375;
 
     return (
         <View style={[styles.row, isSmallScreen ? styles.mobileRow : styles.desktopRow]}>
-            <View style={[styles.container, !isSmallScreen && styles.desktopInput]}>
+            <View
+                onPointerEnter={() => setInputHovered(true)}
+                onPointerLeave={() => setInputHovered(false)}
+                style={[styles.container, !isSmallScreen && styles.desktopInput, inputHovered && styles.inputHover, inputFocused && focusStyle]}>
                 <Image
                     contentFit="contain"
                     source={require('@/assets/images/icon-search.svg')}
@@ -41,15 +43,15 @@ export default function SearchBar() {
                     returnKeyType="search"
                 />
             </View>
-            <AnimatedPressable
+            <InteractivePressable
+                showFocusOutline={false}
                 accessibilityRole="button"
                 accessibilityLabel="search"
-                onPressIn={() => setPressed(true)}
-                onPressOut={() => setPressed(false)}
-                style={[styles.button, pressed && styles.buttonPressed]}
+                hoverStyle={styles.buttonHover}
+                style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
             >
-                <AppText style={styles.textBtn}>Search</AppText>
-            </AnimatedPressable>
+                <AppText>Search</AppText>
+            </InteractivePressable>
         </View>
     );
 }
@@ -93,13 +95,13 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.primaryDark,
         transform: [{ scale: 0.97 }],
     },
+    buttonHover: { backgroundColor: 'hsl(233, 67%, 62%)' },
+    inputHover: { backgroundColor: Colors.surfaceRaised },
     text: {
         flex: 1,
         minWidth: 0,
         color: Colors.text,
         fontFamily: Fonts.body
-    },
-    textBtn: {
     },
     magnify: {
         width: 15,

@@ -1,22 +1,27 @@
-import Header from '@/components/Header';
+import Header from '@/components/Header/Header';
 import SearchBar from '@/components/SearchBar';
+import AppText from '@/components/ui/AppText';
+import WeatherError from '@/components/WeatherError';
 import WeatherOverview from '@/components/WeatherOverview/WeatherOverview';
-import SelectProvider, { useSelectMenu } from '@/components/ui/SelectProvider';
 import { Colors, Fonts } from '@/constants/theme';
+import { useWeather } from '@/contexts/WeatherContext';
+import { Link } from 'expo-router';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+
 export default function HomeScreen() {
-    return <SelectProvider><HomeContent /></SelectProvider>;
+    return <HomeContent />;
 }
 
 function HomeContent() {
-    const { closeMenu } = useSelectMenu();
+
+    const { data, loading, error, retry } = useWeather();
 
     return (
         <View style={styles.screen}>
 
-            {/* Navbar */}
+            {/* Header */}
             <SafeAreaView edges={['top', 'left', 'right']} style={styles.headerLayer}>
                 <Header />
             </SafeAreaView>
@@ -25,15 +30,32 @@ function HomeContent() {
             {/* Home */}
             <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
                 <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled"
-                    onScrollBeginDrag={closeMenu} onScroll={closeMenu} scrollEventThrottle={16}>
+                    >
 
+                    {/* error */}
+                    {error ? <WeatherError onRetry={retry} /> : <>
+
+                    {/* title */}
                     <Text style={styles.title}>
                         How’s the sky looking today?
                     </Text>
 
+                    {/* search */}
                     <SearchBar />
 
-                    <WeatherOverview />
+                    {/* loading message */}
+                    {loading && <AppText style={styles.status} accessibilityLiveRegion="polite">Finding your location and loading weather…</AppText>}
+
+                    {data && <>
+                        {data.notice && <AppText style={styles.status}>{data.notice}</AppText>}
+
+                        {/* body */}
+                        <WeatherOverview />
+
+                        {/* Open meteo link */}
+                        <Link href="https://open-meteo.com/" style={styles.attribution}>Weather data by Open-Meteo</Link>
+                    </>}
+                    </>}
                 </ScrollView>
             </SafeAreaView>
 
@@ -42,6 +64,8 @@ function HomeContent() {
 }
 
 const styles = StyleSheet.create({
+    status: { marginTop: 20, alignSelf: 'center', gap: 12 },
+    attribution: { fontFamily: Fonts.body, color: Colors.textMuted, fontSize: 12, textAlign: 'center', marginVertical: 12 },
     screen: {
         flex: 1,
     },

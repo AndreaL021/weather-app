@@ -21,6 +21,7 @@
     },
     "plugins": [
       "expo-router",
+      ["expo-location", { "locationWhenInUsePermission": "Allow Weather Now to use your location to show local weather." }],
       [
         "expo-splash-screen",
         {
