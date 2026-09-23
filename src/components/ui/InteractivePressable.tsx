@@ -29,7 +29,7 @@ const InteractivePressable = forwardRef<View, Props>(function InteractivePressab
                     // Applica il colore hover solo se il pulsante è abilitato, e non viene premuto
                     !props.disabled && hovered && !state.pressed && (hoverStyle ? hoverStyle : styles.hover),
 
-                    showFocusOutline && focused && styles.focus,
+                    showFocusOutline && !props.disabled && (focused || state.pressed) && styles.focus,
                 ]
             }
         />
@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
         outlineWidth: 2,
         outlineStyle: 'solid',
         outlineColor: Colors.text,
+        outlineOffset: 3,
     },
 });
 

@@ -1,7 +1,8 @@
 import { Colors, Fonts } from '@/constants/theme';
 import { isLoaded } from 'expo-font';
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import InteractivePressable from './InteractivePressable';
 
 type Props = {
     message: string;
@@ -59,14 +60,15 @@ function ToastMessage({ message, variant = 'primary', duration = 4000 }: Props) 
             </Text>
 
             {/* chiudi */}
-            <Pressable
+            <InteractivePressable
                 accessibilityRole="button"
                 accessibilityLabel="Dismiss notification"
                 onPress={() => setDismissed(true)}
+                hoverStyle={styles.close}
                 style={({ pressed }) => [styles.close, pressed && styles.pressed]}
             >
                 <Text style={[styles.closeText, variant === 'warning' && styles.warningText]}>×</Text>
-            </Pressable>
+            </InteractivePressable>
 
         </View>
     );

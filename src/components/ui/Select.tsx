@@ -2,6 +2,7 @@ import { Colors } from '@/constants/theme';
 import { Image, type ImageSource } from 'expo-image';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { Animated, Modal, Platform, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppText from './AppText';
 import InteractivePressable, { focusStyle } from './InteractivePressable';
 
@@ -44,26 +45,61 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
 
     // Si collega al pulsante tramite ref={buttonRef} dentro return (riga 69)
     const buttonRef = useRef<View>(null);
+    const modalRef = useRef<View>(null);
+    const [modalFrame, setModalFrame] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
 
 
     const { width, height } = useWindowDimensions();
+    const insets = useSafeAreaInsets();
 
     const closeMenu = () => setIsOpen(false);
     const openMenu = () => {
+        setModalFrame(null);
 
-        // misura il pulsante nella finestra e rende visibile il menu
+        // Su Android usa le coordinate della pagina: includono già il padding della SafeAreaView.
+        // measureInWindow può invece sottrarre lo spazio della barra di stato.
+        if (Platform.OS === 'android') {
+            buttonRef.current?.measure((_x, _y, width, height, pageX, pageY) => {
+                setButton({ x: pageX, y: pageY, width, height });
+                setIsOpen(true);
+            });
+            return;
+        }
+
+        // Misura il pulsante nella finestra e rende visibile il menu.
         buttonRef.current?.measureInWindow((x, y, width, height) => {
             setButton({ x, y, width, height });
             setIsOpen(true);
         });
     };
 
-    // Allinea il menu al pulsante, mantenendolo dentro lo schermo.
-    const actualWidth = Math.min(menuWidth, width - 24);
-    const below = height - button.y - button.height - 20;
+    const measureModal = () => {
+        if (Platform.OS === 'android') {
+            modalRef.current?.measure((_x, _y, width, height, pageX, pageY) => {
+                setModalFrame({ x: pageX, y: pageY, width, height });
+            });
+            return;
+        }
+
+        modalRef.current?.measureInWindow((x, y, width, height) => {
+            setModalFrame({ x, y, width, height });
+        });
+    };
+
+    // Converte le coordinate della finestra in coordinate relative al Modal.
+    const buttonX = button.x - (modalFrame?.x ?? 0);
+    const buttonY = button.y - (modalFrame?.y ?? 0);
+    const modalWidth = modalFrame?.width ?? width;
+    const modalHeight = modalFrame?.height ?? height;
+    // Mantiene il menu lontano da notch e barre di sistema, oltre ai 12 di margine.
+    const leftLimit = insets.left + 12;
+    const rightLimit = modalWidth - insets.right - 12;
+    const actualWidth = Math.max(0, Math.min(menuWidth, rightLimit - leftLimit));
+    const below = modalHeight - insets.bottom - buttonY - button.height - 20;
+    const spaceAbove = buttonY - insets.top - 20;
 
     // Se sotto c'è poco spazio e sopra ce n'è di più, apre verso l'alto.
-    const above = below < 260 && button.y > below;
+    const above = below < 260 && spaceAbove > below;
 
     return (
         <>
@@ -93,9 +129,9 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
             </InteractivePressable>
 
             {/* dropdown */}
-            <Modal visible={isOpen} transparent animationType="none" onRequestClose={closeMenu} statusBarTranslucent>
+            <Modal visible={isOpen} transparent animationType="none" onRequestClose={closeMenu} onShow={measureModal} statusBarTranslucent navigationBarTranslucent>
 
-                <View style={styles.modal}>
+                <View ref={modalRef} collapsable={false} onLayout={measureModal} style={styles.modal}>
 
                     {/* Chiusura menu con tocco esterno */}
                     <Pressable style={styles.backdrop} onPress={closeMenu} accessibilityRole="button" accessibilityLabel="Close menu" />
@@ -103,9 +139,12 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
                     <View
                         style={[styles.menu, {
                             width: actualWidth,
-                            left: button.x + button.width - actualWidth,
+                            opacity: modalFrame ? 1 : 0,
+                            left: Math.max(leftLimit, Math.min(buttonX + button.width - actualWidth, rightLimit - actualWidth)),
+                            // Limita il menu allo spazio disponibile: le opzioni in eccesso scorrono all'interno.
+                            maxHeight: Math.max(0, above ? spaceAbove : below),
                             // Usa bottom oppure top per lasciare 8 di distanza dal pulsante.
-                            ...(above ? { bottom: height - button.y + 8 } : { top: button.y + button.height + 8 }),
+                            ...(above ? { bottom: modalHeight - buttonY + 8 } : { top: buttonY + button.height + 8 }),
                         }]}
                     >
                         

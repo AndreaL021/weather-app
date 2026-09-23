@@ -2,13 +2,14 @@ import CurrentWeather from './CurrentWeather';
 import DailyForecast from './DailyForecast';
 import HourlyForecast from './HourlyForecast';
 import WeatherDetails from './WeatherDetails';
+import { WeatherLoadingHourly, WeatherLoadingMain } from './WeatherLoading';
 
 
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 
 
 
-export default function WeatherOverview() {
+export default function WeatherOverview({ loading = false }: { loading?: boolean }) {
 
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 800;
@@ -26,11 +27,16 @@ export default function WeatherOverview() {
 
             <View style={[styles.main, !isMediumScreen && styles.mainDesktop]}>
 
-                <CurrentWeather />
+                {            // schermata caricamento
+                    loading ? <WeatherLoadingMain /> :
+                        <>
+                            <CurrentWeather />
 
-                <WeatherDetails />
+                            <WeatherDetails />
 
-                <DailyForecast />
+                            <DailyForecast />
+                        </>
+                }
 
             </View>
 
@@ -38,7 +44,7 @@ export default function WeatherOverview() {
 
                 <View style={!isMediumScreen && StyleSheet.absoluteFill}>
 
-                    <HourlyForecast fillHeight={!isMediumScreen} />
+                    {loading ? <WeatherLoadingHourly fillHeight={!isMediumScreen} /> : <HourlyForecast fillHeight={!isMediumScreen} />}
 
                 </View>
 

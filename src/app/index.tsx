@@ -1,6 +1,5 @@
 import Header from '@/components/Header/Header';
 import SearchBar from '@/components/SearchBar';
-import AppText from '@/components/ui/AppText';
 import WeatherError from '@/components/WeatherError';
 import WeatherOverview from '@/components/WeatherOverview/WeatherOverview';
 import { Colors, Fonts } from '@/constants/theme';
@@ -47,16 +46,11 @@ function HomeContent() {
                                 {/* barra ricerca */}
                                 <SearchBar />
 
-                                {/* caricamento */}
-                                {
-                                    loading && <AppText style={styles.status} accessibilityLiveRegion="polite">Finding your location and loading weather…</AppText>
-                                }
+                                {/* Mostra le card segnaposto durante il caricamento, anche quando cambia la città. */}
+                                {(loading || data) && <WeatherOverview loading={loading} />}
 
                                 {
                                     data && <>
-
-                                        {/* body */}
-                                        <WeatherOverview />
 
                                         {/* Collegamento a Open-Meteo */}
                                         <Link href="https://open-meteo.com/" style={styles.attribution}>Weather data by Open-Meteo</Link>
@@ -72,11 +66,6 @@ function HomeContent() {
 }
 
 const styles = StyleSheet.create({
-    status: { 
-        marginTop: 20, 
-        alignSelf: 'center', 
-        gap: 12 
-    },
     attribution: { 
         fontFamily: Fonts.body, 
         color: Colors.textMuted, 

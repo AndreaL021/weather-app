@@ -1,11 +1,12 @@
+import { cityLabel, type City } from '@/services/citySearch';
 import { fetchLocationName } from '@/services/locationName';
 import { fetchWeather, type Weather } from '@/services/weather';
 import * as Location from 'expo-location';
-import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { Platform } from 'react-native';
 
 type Result = { weather: Weather; place: string; notice: string | null };
-type State = { data: Result | null; loading: boolean; error: boolean; retry: () => void };
+type State = { data: Result | null; loading: boolean; error: boolean; retry: () => void; selectCity: (city: City) => void };
 const WeatherContext = createContext<State | null>(null);
 
 
@@ -13,10 +14,12 @@ let initialRequest: Promise<Result> | null = null;
 
 
 export default function WeatherProvider({ children }: { children: ReactNode }) {
-    // tentativi
+
     const [attempt, setAttempt] = useState(0);
+    const [selectedCity, setSelectedCity] = useState<City | null>(null);
+    
     // stato, senza la proprieta retry
-    const [state, setState] = useState<Omit<State, 'retry'>>({
+    const [state, setState] = useState<Omit<State, 'retry' | 'selectCity'>>({
         data: null,
         loading: true,
         error: false
@@ -26,7 +29,12 @@ export default function WeatherProvider({ children }: { children: ReactNode }) {
 
         let active = true;
 
-        const request = initialRequest ? initialRequest : (initialRequest = loadLocalWeather());
+        // La ricerca usa le coordinate della città scelta, senza richiedere la posizione GPS.
+        const request = selectedCity
+            ? fetchWeather(selectedCity.latitude, selectedCity.longitude).then(weather => ({
+                weather, place: cityLabel(selectedCity), notice: null,
+            }))
+            : initialRequest ? initialRequest : (initialRequest = loadLocalWeather());
 
         request.then(data => {
 
@@ -46,7 +54,13 @@ export default function WeatherProvider({ children }: { children: ReactNode }) {
             active = false;
         };
 
-    }, [attempt]);
+    }, [attempt, selectedCity]);
+
+    const selectCity = (city: City) => {
+        setState(current => ({ ...current, loading: true, error: false }));
+        setSelectedCity(city);
+        setAttempt(value => value + 1);
+    };
 
     // azzera la richiesta precedente, cancella dati e errore, incrementa attempt
     const retry = () => {
@@ -55,7 +69,7 @@ export default function WeatherProvider({ children }: { children: ReactNode }) {
         setAttempt(value => value + 1);
     };
 
-    return <WeatherContext.Provider value={{ ...state, retry }}>{children}</WeatherContext.Provider>;
+    return <WeatherContext.Provider value={{ ...state, retry, selectCity }}>{children}</WeatherContext.Provider>;
 }
 
 

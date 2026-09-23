@@ -16,7 +16,7 @@ export default function CurrentWeather() {
     const isSmallScreen = width < 400;
 
     if (!data) return null;
-    
+
     const current = data.weather.current;
     const icon = weatherIcon(current.weather_code);
 
@@ -35,7 +35,7 @@ export default function CurrentWeather() {
                 style={StyleSheet.absoluteFill}
                 accessible={false}
             />
-            
+
             <View style={isSmallScreen ? styles.column : styles.row}>
 
                 <View style={isSmallScreen && styles.textCenter}>
@@ -58,7 +58,7 @@ export default function CurrentWeather() {
                     {/* icona meteo */}
                     <Image
                         source={icon.icon}
-                        style={[styles.image, { aspectRatio: isSmallScreen? 0.6 :1 }]}
+                        style={[styles.image, { aspectRatio: isSmallScreen ? 0.6 : 1 }]}
                         contentFit="contain"
                         accessibilityLabel={icon.condition}
                     />
