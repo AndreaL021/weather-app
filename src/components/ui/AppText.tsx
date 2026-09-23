@@ -1,3 +1,5 @@
+// componente text con fontfamily e fontsize impostati di default
+
 import { StyleSheet, Text, type TextProps } from 'react-native';
 
 import { Colors, Fonts } from '@/constants/theme';
@@ -7,9 +9,9 @@ export default function AppText({ style, ...props }: TextProps) {
 }
 
 const styles = StyleSheet.create({
-  text: {
-    fontFamily: Fonts.body,
-    color: Colors.text,
-    fontSize: 12
-  },
+    text: {
+        fontFamily: Fonts.body,
+        color: Colors.text,
+        fontSize: 12
+    },
 });

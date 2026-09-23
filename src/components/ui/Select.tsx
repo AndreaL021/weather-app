@@ -41,6 +41,7 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
 
     // Salva posizione e dimensioni del pulsante per posizionare il menu
     const [button, setButton] = useState({ x: 0, y: 0, width: 0, height: 0 });
+
     // Si collega al pulsante tramite ref={buttonRef} dentro return (riga 69)
     const buttonRef = useRef<View>(null);
 
@@ -75,43 +76,64 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
                 accessibilityState={{ expanded: isOpen }}
                 style={({ pressed }) => [styles.button, variant === 'raised' && styles.raised, pressed && styles.pressed, isOpen && focusStyle]}
             >
-                {icon && <Image source={icon} style={styles.icon} contentFit="contain" accessible={false} />}
+                {
+                    icon && <Image source={icon} style={styles.icon} contentFit="contain" accessible={false} />
+                }
+
                 <AppText>{label}</AppText>
 
+                {/* animazione */}
                 <Animated.View style={{ transform: [{ rotate: rotation.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '180deg'] }) }] }}>
+
+                    {/* icona animata */}
                     <Image source={require('@/assets/images/icon-dropdown.svg')} style={styles.arrow} contentFit="contain" accessible={false} />
+
                 </Animated.View>
 
             </InteractivePressable>
 
+            {/* dropdown */}
             <Modal visible={isOpen} transparent animationType="none" onRequestClose={closeMenu} statusBarTranslucent>
+
                 <View style={styles.modal}>
 
                     {/* Chiusura menu con tocco esterno */}
-                    <Pressable style={styles.backdrop} onPress={closeMenu} accessibilityRole="button" accessibilityLabel="Chiudi menu" />
+                    <Pressable style={styles.backdrop} onPress={closeMenu} accessibilityRole="button" accessibilityLabel="Close menu" />
 
-                    <View style={[styles.menu, {
-                        width: actualWidth,
-                        left: button.x + button.width - actualWidth,
-
-                        // Usa bottom oppure top per lasciare 8 di distanza dal pulsante.
-                        ...(above ? { bottom: height - button.y + 8 } : { top: button.y + button.height + 8 }),
-                    }]}>
+                    <View
+                        style={[styles.menu, {
+                            width: actualWidth,
+                            left: button.x + button.width - actualWidth,
+                            // Usa bottom oppure top per lasciare 8 di distanza dal pulsante.
+                            ...(above ? { bottom: height - button.y + 8 } : { top: button.y + button.height + 8 }),
+                        }]}
+                    >
+                        
                         <ScrollView keyboardShouldPersistTaps="handled">
 
                             {/* Ogni opzione comunica il nuovo valore al genitore e chiude il menu. */}
-                            {options?.map(option => (
-                                <InteractivePressable
-                                    key={option.value}
-                                    accessibilityRole="button"
-                                    accessibilityState={{ selected: option.value === value }}
-                                    onPress={() => { onChange?.(option.value); closeMenu(); }}
-                                    style={({ pressed }) => [styles.option, option.value === value && styles.selected, pressed && styles.pressed]}>
-                                    <AppText>{option.label}</AppText>
-                                    {option.value === value && <Image source={require('@/assets/images/icon-checkmark.svg')} style={styles.check} accessible={false} />}
-                                </InteractivePressable>
-                            ))}
+                            {
+                                options?.map(option => (
+                                    <InteractivePressable
+                                        key={option.value}
+                                        accessibilityRole="button"
+                                        accessibilityState={{ selected: option.value === value }}
+                                        onPress={() => { onChange?.(option.value); closeMenu(); }}
+                                        style={({ pressed }) => [styles.option, option.value === value && styles.selected, pressed && styles.pressed]}
+                                    >
+
+                                        <AppText>{option.label}</AppText>
+                                        {
+                                            option.value === value && <Image source={require('@/assets/images/icon-checkmark.svg')} style={styles.check} accessible={false} />
+                                        }
+
+                                    </InteractivePressable>
+                                ))
+                            }
+
+                            {/* necessario per menu personalizzato units */}
                             {children}
+
                         </ScrollView>
                     </View>
                 </View>
@@ -124,7 +146,6 @@ const styles = StyleSheet.create({
     modal: {
         flex: 1
     },
-
     backdrop: {
         position: 'absolute',
         top: 0,
@@ -133,7 +154,6 @@ const styles = StyleSheet.create({
         right: 0,
         cursor: 'auto'
     },
-
     menu: {
         position: 'absolute',
         padding: 8,
@@ -142,7 +162,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.border
     },
-
     button: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -152,28 +171,24 @@ const styles = StyleSheet.create({
         padding: 8,
         borderRadius: 8
     },
-
     raised: {
         backgroundColor: Colors.border
     },
-
     icon: {
-        width: 12, height: 12
+        width: 12,
+        height: 12
     },
-
     arrow: {
         width: 10,
         height: 10,
     },
-
-
     check: {
         width: 14,
         height: 14
     },
-
-    pressed: { backgroundColor: 'hsl(243, 27%, 16%)' },
-
+    pressed: {
+        backgroundColor: 'hsl(243, 27%, 16%)'
+    },
     selected: {
         backgroundColor: Colors.surfaceRaised
     },

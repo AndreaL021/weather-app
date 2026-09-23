@@ -2,9 +2,21 @@ import { createContext, type ReactNode, useContext, useState } from 'react';
 
 
 
-type Units = { temperature: 'celsius' | 'fahrenheit'; wind: 'kmh' | 'mph'; precipitation: 'mm' | 'in' };
-const metric: Units = { temperature: 'celsius', wind: 'kmh', precipitation: 'mm' };
-const imperial: Units = { temperature: 'fahrenheit', wind: 'mph', precipitation: 'in' };
+type Units = { 
+    temperature: 'celsius' | 'fahrenheit'; 
+    wind: 'kmh' | 'mph'; 
+    precipitation: 'mm' | 'in' 
+};
+const metric: Units = { 
+    temperature: 'celsius', 
+    wind: 'kmh', 
+    precipitation: 'mm' 
+};
+const imperial: Units = { 
+    temperature: 'fahrenheit', 
+    wind: 'mph', 
+    precipitation: 'in' 
+};
 type UnitsContextValue = {
     units: Units;
     system: 'metric' | 'imperial' | 'custom';
@@ -30,7 +42,7 @@ export default function UnitsProvider({ children }: { children: ReactNode }) {
 
     return (
 
-        // Context
+        // Dati condivisi
         <UnitsContext.Provider value={{
             units, system, setUnit,
             setSystem: next => setUnits(next === 'metric' ? metric : imperial),
@@ -44,7 +56,7 @@ export default function UnitsProvider({ children }: { children: ReactNode }) {
     );
 }
 
-// Ogni file importa questo hook per leggere il Context
+// Ogni file importa questo hook per leggere il contesto
 export function useUnits() {
     const context = useContext(UnitsContext);
     if (!context) throw new Error('useUnits deve essere dentro UnitsProvider.');

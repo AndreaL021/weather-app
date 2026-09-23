@@ -4,30 +4,38 @@ import Select from '../ui/Select';
 import DropdownMenu from './DropdownMenu';
 
 export default function Header() {
+
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 600;
 
     return (
         <View style={[styles.container, { paddingHorizontal: isSmallScreen ? 0 : 70 }]}>
+
             <View style={styles.row}>
+
                 {/* logo */}
                 <View style={styles.logoContainer}>
+
                     <Image
                         source={require('@/assets/images/logo.svg')}
                         style={styles.logo}
                         contentFit="contain"
                         accessibilityLabel="Weather Now"
                     />
+
                 </View>
+                
                 {/* select */}
                 <Select
                     label="Units"
-                    accessibilityLabel="Unità di misura"
+                    accessibilityLabel="Measurement units"
                     icon={require('@/assets/images/icon-units.svg')}
                     menuWidth={240}
                 >
-                    {/* menu personalizzato */}
+
+                    {/* menu personalizzato units */}
                     <DropdownMenu />
+
                 </Select>
             </View>
         </View>

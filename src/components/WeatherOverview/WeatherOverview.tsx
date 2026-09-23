@@ -11,22 +11,39 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 export default function WeatherOverview() {
 
     const { width } = useWindowDimensions();
-    // const sideBar = width < 900;
     const isSmallScreen = width < 800;
     const isMediumScreen = width < 1000;
 
     return (
-        <View style={[styles.container, isMediumScreen ? styles.mobile : styles.desktop, { width: isSmallScreen ? '100%' : isMediumScreen ? '70%' : '80%' }]}>
+        <View style={[
+            styles.container,
+            isMediumScreen ? styles.mobile : styles.desktop,
+            {
+                width: isSmallScreen ? '100%' : isMediumScreen ? '70%' : '80%'
+            }
+        ]}
+        >
+
             <View style={[styles.main, !isMediumScreen && styles.mainDesktop]}>
+
                 <CurrentWeather />
+
                 <WeatherDetails />
+
                 <DailyForecast />
+
             </View>
+
             <View style={!isMediumScreen && styles.sidebarDesktop}>
+
                 <View style={!isMediumScreen && StyleSheet.absoluteFill}>
+
                     <HourlyForecast fillHeight={!isMediumScreen} />
+
                 </View>
+
             </View>
+
         </View>
     );
 }

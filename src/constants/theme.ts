@@ -36,8 +36,7 @@ export const Fonts = {
   "heading": "BricolageGrotesque-Bold"
 } as const;
 
-// Da passare a useFonts(FontAssets) quando creeremo il layout.
-// Questa mappa da sola non carica i font.
+// Da passare a useFonts(FontAssets) quando creeremo il layout per caricare i fonts
 export const FontAssets = {
   [Fonts.bodyLight]: require('../../assets/fonts/DM_Sans/static/DMSans-Light.ttf'),
   [Fonts.body]: require('../../assets/fonts/DM_Sans/static/DMSans-Medium.ttf'),

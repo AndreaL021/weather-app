@@ -8,6 +8,7 @@ export default function DropdownMenu() {
     const { units, system, setSystem, setUnit } = useUnits();
     return (
         <View style={styles.container}>
+            
             <View accessibilityRole="radiogroup" accessibilityLabel="Measurement system">
 
                 <AppText style={styles.heading}>Measurement system</AppText>
@@ -38,14 +39,24 @@ export default function DropdownMenu() {
 
                 <DropdownChoice label="Millimeters (mm)" selected={units.precipitation === 'mm'} onPress={() => setUnit('precipitation', 'mm')} />
                 <DropdownChoice label="Inches (in)" selected={units.precipitation === 'in'} onPress={() => setUnit('precipitation', 'in')} />
-                    
+
             </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { gap: 2 },
-    group: { borderTopWidth: 1, borderTopColor: Colors.border, paddingTop: 5 },
-    heading: { color: Colors.textMuted, fontSize: 12, padding: 3 },
+    container: {
+        gap: 2
+    },
+    group: {
+        borderTopWidth: 1,
+        borderTopColor: Colors.border,
+        paddingTop: 5
+    },
+    heading: {
+        color: Colors.textMuted,
+        fontSize: 12,
+        padding: 3
+    },
 });

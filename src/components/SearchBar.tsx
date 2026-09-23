@@ -15,23 +15,28 @@ const webInputStyle = {
 } as unknown as TextStyle;
 
 export default function SearchBar() {
+
     const [inputHovered, setInputHovered] = useState(false);
     const [inputFocused, setInputFocused] = useState(false);
     const { width } = useWindowDimensions();
-    const isSmallScreen = width < 375;
+    const isSmallScreen = width < 400;
 
     return (
         <View style={[styles.row, isSmallScreen ? styles.mobileRow : styles.desktopRow]}>
+
             <View
                 onPointerEnter={() => setInputHovered(true)}
                 onPointerLeave={() => setInputHovered(false)}
-                style={[styles.container, !isSmallScreen && styles.desktopInput, inputHovered && styles.inputHover, inputFocused && focusStyle]}>
+                style={[styles.container, !isSmallScreen && styles.desktopInput, inputHovered && styles.inputHover, inputFocused && focusStyle]}
+            >
+
                 <Image
                     contentFit="contain"
                     source={require('@/assets/images/icon-search.svg')}
                     style={styles.magnify}
                     accessible={false}
                 />
+
                 <TextInput
                     underlineColorAndroid='transparent'
                     style={[styles.text, Platform.OS === 'web' && webInputStyle]}
@@ -39,19 +44,24 @@ export default function SearchBar() {
                     onFocus={() => setInputFocused(true)}
                     onBlur={() => setInputFocused(false)}
                     placeholderTextColor={Colors.textMuted}
-                    accessibilityLabel="Città da cercare"
+                    accessibilityLabel="City to search for"
                     returnKeyType="search"
                 />
+
             </View>
+
             <InteractivePressable
                 showFocusOutline={false}
                 accessibilityRole="button"
-                accessibilityLabel="search"
+                accessibilityLabel="Search"
                 hoverStyle={styles.buttonHover}
                 style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
             >
+
                 <AppText>Search</AppText>
+
             </InteractivePressable>
+
         </View>
     );
 }
@@ -75,7 +85,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
-        padding: 10,
+        paddingHorizontal: 10,
         backgroundColor: Colors.surface,
         borderRadius: 8,
     },
@@ -93,15 +103,22 @@ const styles = StyleSheet.create({
     },
     buttonPressed: {
         backgroundColor: Colors.primaryDark,
-        transform: [{ scale: 0.97 }],
+        transform: [{
+            scale: 0.97
+        }],
     },
-    buttonHover: { backgroundColor: 'hsl(233, 67%, 62%)' },
-    inputHover: { backgroundColor: Colors.surfaceRaised },
+    buttonHover: {
+        backgroundColor: 'hsl(233, 67%, 62%)'
+    },
+    inputHover: {
+        backgroundColor: Colors.surfaceRaised
+    },
     text: {
         flex: 1,
         minWidth: 0,
         color: Colors.text,
-        fontFamily: Fonts.body
+        fontFamily: Fonts.body,
+        fontSize: 12
     },
     magnify: {
         width: 15,

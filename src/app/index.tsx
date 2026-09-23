@@ -17,45 +17,53 @@ export default function HomeScreen() {
 function HomeContent() {
 
     const { data, loading, error, retry } = useWeather();
-
+    
     return (
+
         <View style={styles.screen}>
 
-            {/* Header */}
+            {/* header */}
             <SafeAreaView edges={['top', 'left', 'right']} style={styles.headerLayer}>
+
                 <Header />
+
             </SafeAreaView>
 
 
-            {/* Home */}
+            {/* home */}
             <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.container}>
-                <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled"
-                    >
+                <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+                    {
+                        error
+                            ?   // messaggio errore + riprova
+                                <WeatherError onRetry={retry} /> 
+                            : <>
 
-                    {/* error */}
-                    {error ? <WeatherError onRetry={retry} /> : <>
+                                {/* titolo */}
+                                <Text style={styles.title}>
+                                    How’s the sky looking today?
+                                </Text>
 
-                    {/* title */}
-                    <Text style={styles.title}>
-                        How’s the sky looking today?
-                    </Text>
+                                {/* barra ricerca */}
+                                <SearchBar />
 
-                    {/* search */}
-                    <SearchBar />
+                                {/* caricamento */}
+                                {
+                                    loading && <AppText style={styles.status} accessibilityLiveRegion="polite">Finding your location and loading weather…</AppText>
+                                }
 
-                    {/* loading message */}
-                    {loading && <AppText style={styles.status} accessibilityLiveRegion="polite">Finding your location and loading weather…</AppText>}
+                                {
+                                    data && <>
 
-                    {data && <>
-                        {data.notice && <AppText style={styles.status}>{data.notice}</AppText>}
+                                        {/* body */}
+                                        <WeatherOverview />
 
-                        {/* body */}
-                        <WeatherOverview />
-
-                        {/* Open meteo link */}
-                        <Link href="https://open-meteo.com/" style={styles.attribution}>Weather data by Open-Meteo</Link>
-                    </>}
-                    </>}
+                                        {/* Collegamento a Open-Meteo */}
+                                        <Link href="https://open-meteo.com/" style={styles.attribution}>Weather data by Open-Meteo</Link>
+                                    </>
+                                }
+                            </>
+                    }
                 </ScrollView>
             </SafeAreaView>
 
@@ -64,8 +72,18 @@ function HomeContent() {
 }
 
 const styles = StyleSheet.create({
-    status: { marginTop: 20, alignSelf: 'center', gap: 12 },
-    attribution: { fontFamily: Fonts.body, color: Colors.textMuted, fontSize: 12, textAlign: 'center', marginVertical: 12 },
+    status: { 
+        marginTop: 20, 
+        alignSelf: 'center', 
+        gap: 12 
+    },
+    attribution: { 
+        fontFamily: Fonts.body, 
+        color: Colors.textMuted, 
+        fontSize: 12, 
+        textAlign: 'center', 
+        marginVertical: 12 
+    },
     screen: {
         flex: 1,
     },
@@ -88,6 +106,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         paddingVertical: 5,
         backgroundColor: 'transparent',
-       
+
     },
 });
