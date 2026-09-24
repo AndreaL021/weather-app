@@ -1,31 +1,27 @@
+import useBreakpoints from '@/hooks/useBreakpoints';
 import CurrentWeather from './CurrentWeather';
 import DailyForecast from './DailyForecast';
 import HourlyForecast from './HourlyForecast';
 import WeatherDetails from './WeatherDetails';
 import { WeatherLoadingHourly, WeatherLoadingMain } from './WeatherLoading';
 
-
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
-
+import { StyleSheet, View } from 'react-native';
 
 
 export default function WeatherOverview({ loading = false }: { loading?: boolean }) {
 
-    const { width } = useWindowDimensions();
-    const isSmallScreen = width < 800;
-    const isMediumScreen = width < 1000;
-
+    const { isMediumScreen, isLargeScreen, isXLScreen, isXXLScreen } = useBreakpoints()
     return (
         <View style={[
             styles.container,
-            isMediumScreen ? styles.mobile : styles.desktop,
+            isLargeScreen ? styles.mobile : styles.desktop,
             {
-                width: isSmallScreen ? '100%' : isMediumScreen ? '70%' : '80%'
+                width: isMediumScreen ? '100%' : isLargeScreen ? '90%' : isXLScreen ? '100%' : isXXLScreen ? '70%' : '90%'
             }
         ]}
         >
 
-            <View style={[styles.main, !isMediumScreen && styles.mainDesktop]}>
+            <View style={[styles.main, !isLargeScreen && styles.mainDesktop]}>
 
                 {            // schermata caricamento
                     loading ? <WeatherLoadingMain /> :
@@ -40,11 +36,15 @@ export default function WeatherOverview({ loading = false }: { loading?: boolean
 
             </View>
 
-            <View style={!isMediumScreen && styles.sidebarDesktop}>
+            <View style={!isLargeScreen && styles.sidebarDesktop}>
 
-                <View style={!isMediumScreen && StyleSheet.absoluteFill}>
+                <View style={!isLargeScreen && StyleSheet.absoluteFill}>
 
-                    {loading ? <WeatherLoadingHourly fillHeight={!isMediumScreen} /> : <HourlyForecast fillHeight={!isMediumScreen} />}
+                    {
+                        loading
+                            ? <WeatherLoadingHourly fillHeight={!isLargeScreen} />
+                            : <HourlyForecast fillHeight={!isLargeScreen} />
+                    }
 
                 </View>
 
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
         minWidth: 0,
     },
     sidebarDesktop: {
-        flex: 3,
+        flex: 4,
         minWidth: 0,
     },
 });

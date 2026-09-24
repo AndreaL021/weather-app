@@ -1,19 +1,18 @@
 import { Image } from 'expo-image';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import AppText from '../ui/AppText';
 
 import { Colors } from '@/constants/theme';
 import { useUnits } from '@/contexts/UnitsContext';
 import { useWeather } from '@/contexts/WeatherContext';
+import useBreakpoints from '@/hooks/useBreakpoints';
 import { weatherIcon } from '@/services/weather';
 
 export default function CurrentWeather() {
 
     const { temperature } = useUnits();
-    const { width } = useWindowDimensions();
     const { data } = useWeather();
-
-    const isSmallScreen = width < 400;
+    const { isXSScreen, isSmallScreen, isXXLScreen } = useBreakpoints()
 
     if (!data) return null;
 
@@ -25,11 +24,11 @@ export default function CurrentWeather() {
     });
 
     return (
-        <View style={[styles.container]}>
+        <View style={[styles.container, { paddingVertical: isXXLScreen ? 100 : 50 }]}>
 
             {/* Immagine di sfondo */}
             <Image
-                source={isSmallScreen ? require('@/assets/images/bg-today-small.svg') : require('@/assets/images/bg-today-large.svg')}
+                source={isXSScreen ? require('@/assets/images/bg-today-small.svg') : require('@/assets/images/bg-today-large.svg')}
                 contentFit="cover"
                 accessibilityLabel="Weather Now"
                 style={StyleSheet.absoluteFill}
@@ -40,13 +39,13 @@ export default function CurrentWeather() {
 
                 <View style={isSmallScreen && styles.textCenter}>
 
-                    <AppText style={{ fontSize: 16 }}>
+                    <AppText size='title'>
 
                         {data.place}
 
                     </AppText>
 
-                    <AppText style={{ color: Colors.textSecondary }}>
+                    <AppText size='header' style={{ color: Colors.textSecondary }}>
 
                         {date}
 
@@ -58,7 +57,7 @@ export default function CurrentWeather() {
                     {/* icona meteo */}
                     <Image
                         source={icon.icon}
-                        style={[styles.image, { aspectRatio: isSmallScreen ? 0.6 : 1 }]}
+                        style={[styles.image, { aspectRatio: isXSScreen ? 0.6 : 1, width: isSmallScreen ? 70 : 100 }]}
                         contentFit="contain"
                         accessibilityLabel={icon.condition}
                     />
@@ -85,11 +84,9 @@ const styles = StyleSheet.create({
         padding: 16,
         borderRadius: 12,
         overflow: 'hidden',
-        paddingVertical: 50,
     },
     image: {
         zIndex: 10,
-        width: 70,
     },
     row: {
         flexDirection: 'row',

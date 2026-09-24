@@ -1,36 +1,38 @@
+import useBreakpoints from '@/hooks/useBreakpoints';
 import { Image } from 'expo-image';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Select from '../ui/Select';
 import DropdownMenu from './DropdownMenu';
 
 export default function Header() {
 
-    const { width } = useWindowDimensions();
-    const isSmallScreen = width < 600;
+    const { isSmallScreen, isMediumScreen, isLargeScreen, isXLScreen, isXXLScreen } = useBreakpoints();
 
     return (
-        <View style={[styles.container, { paddingHorizontal: isSmallScreen ? 0 : 70 }]}>
+        <View style={[styles.container, {
+            width: isMediumScreen ? '100%' : isLargeScreen ? '90%' : isXLScreen ? '100%' : isXXLScreen ? '70%' : '90%'
+        }]}>
 
             <View style={styles.row}>
 
                 {/* logo */}
-                <View style={styles.logoContainer}>
+                <View style={[styles.logoContainer, { width: isSmallScreen ? 150 : 200 }]}>
 
                     <Image
                         source={require('@/assets/images/logo.svg')}
-                        style={styles.logo}
+                        style={{ height: 60 }}
                         contentFit="contain"
                         accessibilityLabel="Weather Now"
                     />
 
                 </View>
-                
+
                 {/* select */}
                 <Select
                     label="Units"
                     accessibilityLabel="Measurement units"
                     icon={require('@/assets/images/icon-units.svg')}
-                    menuWidth={240}
+                    menuWidth={isMediumScreen ? 240 : 300}
                 >
 
                     {/* menu personalizzato units */}
@@ -44,6 +46,7 @@ export default function Header() {
 
 const styles = StyleSheet.create({
     container: {
+        alignSelf: 'center',
         pointerEvents: 'box-none',
         opacity: 1,
     },
@@ -55,11 +58,5 @@ const styles = StyleSheet.create({
     },
     logoContainer: {
         pointerEvents: 'none',
-        width: 150,
-    },
-    logo: {
-        width: '100%',
-        height: 40,
     },
 });
-

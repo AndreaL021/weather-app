@@ -1,15 +1,17 @@
 import AppText from '@/components/ui/AppText';
 import { Colors } from '@/constants/theme';
+
 import { Image } from 'expo-image';
 import { useEffect, useState } from 'react';
 import { Animated, Platform, StyleSheet, View, useWindowDimensions } from 'react-native';
 
 export function WeatherLoadingMain() {
 
+
     const [dots] = useState(() => [new Animated.Value(0), new Animated.Value(0), new Animated.Value(0)]);
 
     useEffect(() => {
-        // Il pallino successivo parte dopo 200 ms, quando il precedente arriva in alto.
+        // animazione caricamento
         const animation = Animated.loop(Animated.stagger(200, dots.map(dot => Animated.sequence([
             Animated.timing(dot, { toValue: -6, duration: 200, useNativeDriver: Platform.OS !== 'web', isInteraction: false }),
             Animated.timing(dot, { toValue: 0, duration: 200, useNativeDriver: Platform.OS !== 'web', isInteraction: false }),
@@ -43,7 +45,7 @@ export function WeatherLoadingMain() {
 
                     <View key={label} style={[styles.detail, width < 576 && styles.detailMobile]}>
 
-                        <AppText style={styles.label}>{label}</AppText>
+                        <AppText color="textMuted">{label}</AppText>
 
                         <AppText style={styles.value}>–</AppText>
 
@@ -54,7 +56,7 @@ export function WeatherLoadingMain() {
 
             <View style={styles.daily}>
 
-                <AppText style={styles.title}>Daily forecast</AppText>
+                <AppText size='header' style={styles.title}>Daily forecast</AppText>
 
                 {
                     rows.map((row, index) => (
@@ -76,13 +78,14 @@ export function WeatherLoadingMain() {
 
 export function WeatherLoadingHourly({ fillHeight }: { fillHeight: boolean }) {
 
+
     return (
 
         <View style={[styles.hourly, fillHeight && styles.fill]}>
 
             <View style={styles.header}>
 
-                <AppText style={styles.title}>Hourly forecast</AppText>
+                <AppText size='header' style={styles.title}>Hourly forecast</AppText>
 
                 {/* Segnaposto non interattivo: i giorni saranno disponibili dopo il caricamento. */}
                 <View style={styles.daySelector}>
@@ -98,7 +101,7 @@ export function WeatherLoadingHourly({ fillHeight }: { fillHeight: boolean }) {
             <View style={[styles.hours, fillHeight && styles.fill]}>
 
                 {Array.from({ length: 8 }, (_, hour) => <View key={hour} style={[styles.hour, fillHeight && styles.fill]} />)}
-                
+
             </View>
         </View>
     );
@@ -143,15 +146,11 @@ const styles = StyleSheet.create({
     detailMobile: {
         width: '48%',
     },
-    label: {
-        color: Colors.textMuted,
-    },
     value: {
         marginTop: 15,
         fontSize: 16,
     },
     title: {
-        fontSize: 14,
         flexShrink: 1,
     },
     daily: {

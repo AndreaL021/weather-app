@@ -2,16 +2,16 @@ import AppText from '@/components/ui/AppText';
 import { Colors } from '@/constants/theme';
 import { useUnits } from '@/contexts/UnitsContext';
 import { useWeather } from '@/contexts/WeatherContext';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
-
+import useBreakpoints from '@/hooks/useBreakpoints';
+import { StyleSheet, View } from 'react-native';
 
 
 export default function WeatherDetails() {
     const { temperature, wind, precipitation } = useUnits();
 
-    const { width } = useWindowDimensions();
     const { data } = useWeather();
-    const isMediumScreen = width < 576;
+    const { isSmallScreen, isXXLScreen } = useBreakpoints();
+
 
     if (!data) return null;
 
@@ -20,33 +20,33 @@ export default function WeatherDetails() {
 
     return (
 
-        <View style={[styles.container, isMediumScreen && styles.grid]}>
+        <View style={[styles.container, isSmallScreen && styles.grid]}>
 
-            <View style={[styles.card, isMediumScreen && styles.gridCard]}>
+            <View style={[styles.card, isSmallScreen && styles.gridCard, isXXLScreen && styles.largeCard]}>
 
-                <AppText style={{ color: Colors.textMuted }}>
+                <AppText color="textMuted">
 
                     Feels Like
 
                 </AppText>
 
-                <AppText style={{marginTop: 15, fontSize: 16}}>
-                    
+                <AppText>
+
                     {temperature(current.apparent_temperature, true)}
 
                 </AppText>
 
             </View>
 
-            <View style={[styles.card, isMediumScreen && styles.gridCard]}>
+            <View style={[styles.card, isSmallScreen && styles.gridCard, isXXLScreen && styles.largeCard]}>
 
-                <AppText style={{ color: Colors.textMuted }}>
+                <AppText color="textMuted">
 
                     Humidity
 
                 </AppText>
 
-                <AppText style={{marginTop: 15, fontSize: 16}}>
+                <AppText>
 
                     {current.relative_humidity_2m}%
 
@@ -54,15 +54,15 @@ export default function WeatherDetails() {
 
             </View>
 
-            <View style={[styles.card, isMediumScreen && styles.gridCard]}>
+            <View style={[styles.card, isSmallScreen && styles.gridCard, isXXLScreen && styles.largeCard]}>
 
-                <AppText style={{ color: Colors.textMuted }}>
+                <AppText color="textMuted">
 
                     Wind
 
                 </AppText>
 
-                <AppText style={{marginTop: 15, fontSize: 16}}>
+                <AppText>
 
                     {wind(current.wind_speed_10m)}
 
@@ -70,21 +70,21 @@ export default function WeatherDetails() {
 
             </View>
 
-            <View style={[styles.card, isMediumScreen && styles.gridCard]}>
+            <View style={[styles.card, isSmallScreen && styles.gridCard, isXXLScreen && styles.largeCard]}>
 
-                <AppText style={{ color: Colors.textMuted }}>
+                <AppText color="textMuted">
 
                     Precipitation
 
                 </AppText>
-                <AppText style={{marginTop: 15, fontSize: 16}}>
+                <AppText>
 
                     {precipitation(current.precipitation)}
 
                 </AppText>
 
             </View>
-            
+
         </View>
     );
 }
@@ -101,8 +101,14 @@ const styles = StyleSheet.create({
     card: {
         backgroundColor: Colors.surfaceRaised,
         width: '24%',
-        padding: 10,
         borderRadius: 8,
+        padding: 10,
+        justifyContent: 'space-evenly',
+    },
+    largeCard: {
+        minHeight: 110,
+        paddingHorizontal: 30,
+        paddingVertical: 15,
     },
     grid: {
         flexWrap: 'wrap',

@@ -3,6 +3,8 @@ import Select from '@/components/ui/Select';
 import { Colors } from '@/constants/theme';
 import { useUnits } from '@/contexts/UnitsContext';
 import { useWeather } from '@/contexts/WeatherContext';
+import useBreakpoints from '@/hooks/useBreakpoints';
+
 import { dayLabel, weatherIcon } from '@/services/weather';
 import { Image } from 'expo-image';
 import { useState } from 'react';
@@ -14,11 +16,13 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
     const [selectedDay, setSelectedDay] = useState('');
     const { data } = useWeather();
 
+
     if (!data) return null;
 
     const { daily, hourly } = data.weather;
     const dayOptions = daily.time.map(date => ({ value: date, label: dayLabel(date, true) }));
     const activeDay = daily.time.includes(selectedDay) ? selectedDay : daily.time[0];
+    const { isSmallScreen } = useBreakpoints();
 
     const hourlyForecast = hourly.time.map((time, index) => {
 
@@ -39,7 +43,7 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
 
             <View style={styles.header}>
 
-                <AppText style={styles.title}>Hourly forecast</AppText>
+                <AppText size='header' style={styles.title}>Hourly forecast</AppText>
 
                 <Select
                     label={dayLabel(activeDay, true)}
@@ -65,7 +69,7 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
                             {
                                 hourlyForecast.map(hour => (
 
-                                    <View key={hour.dateTime} style={styles.card}>
+                                    <View key={hour.dateTime} style={[styles.card, { padding: 10 }]}>
 
                                         <View style={styles.hour}>
 
@@ -75,7 +79,7 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
 
                                         </View>
 
-                                        <AppText style={{ color: Colors.textSecondary }}>{temperature(hour.temperature)}</AppText>
+                                        <AppText color="textSecondary">{temperature(hour.temperature)}</AppText>
 
                                     </View>
                                 ))
@@ -88,7 +92,7 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
                             {
                                 hourlyForecast.map(hour => (
 
-                                    <View key={hour.dateTime} style={styles.card}>
+                                    <View key={hour.dateTime} style={[styles.card, { padding: isSmallScreen ? 5 : 10 }]}>
 
                                         <View style={styles.hour}>
 
@@ -98,7 +102,7 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
 
                                         </View>
 
-                                        <AppText style={{ color: Colors.textSecondary }}>{temperature(hour.temperature)}</AppText>
+                                        <AppText color="textSecondary">{temperature(hour.temperature)}</AppText>
 
                                     </View>
                                 ))
@@ -124,7 +128,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 12,
-        padding: 3,
         paddingHorizontal: 10,
         borderRadius: 8,
         backgroundColor: Colors.surfaceRaised,
@@ -155,6 +158,5 @@ const styles = StyleSheet.create({
     },
     title: {
         flexShrink: 1,
-        fontSize: 14
     },
 });

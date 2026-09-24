@@ -10,15 +10,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, FontAssets } from '@/constants/theme';
 
 import AppErrorBoundary from '@/components/AppErrorBoundary';
+import Toast from '@/components/ui/Toast';
 import UnitsProvider from '@/contexts/UnitsContext';
 import WeatherProvider, { useWeather } from '@/contexts/WeatherContext';
-import Toast from '@/components/ui/Toast';
 
 // Expo Router usa questa schermata se il layout o i componenti figli generano un errore imprevisto.
 export const ErrorBoundary = AppErrorBoundary;
 // Mantiene visibile la schermata iniziale mentre vengono caricati i font.
 SplashScreen.preventAutoHideAsync();
-
 
 
 export default function RootLayout() {
@@ -81,7 +80,6 @@ function ToastMessages({ fontError }: { fontError: boolean }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: Colors.background,
     },
     notifications: {
         position: 'absolute',

@@ -3,11 +3,11 @@ import { forwardRef, useState } from 'react';
 import { Pressable, StyleSheet, View, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
 
 // Proprietà di Pressable
-type Props = PressableProps & { hoverStyle?: StyleProp<ViewStyle>; showFocusOutline?: boolean };
+type Props = PressableProps & { hoverStyle?: StyleProp<ViewStyle>; showFocusOutline?: boolean; insetOutline?: boolean };
 
 // collega ref ricevuto dall'esterno al Pressable interno.
 const InteractivePressable = forwardRef<View, Props>(function InteractivePressable(
-    { style, hoverStyle, showFocusOutline = true, onHoverIn, onHoverOut, onFocus, onBlur, ...props }, ref,
+    { style, hoverStyle, showFocusOutline = true, insetOutline = false, onHoverIn, onHoverOut, onFocus, onBlur, ...props }, ref,
 ) {
 
     const [hovered, setHovered] = useState(false);
@@ -30,6 +30,8 @@ const InteractivePressable = forwardRef<View, Props>(function InteractivePressab
                     !props.disabled && hovered && !state.pressed && (hoverStyle ? hoverStyle : styles.hover),
 
                     showFocusOutline && !props.disabled && (focused || state.pressed) && styles.focus,
+                    // Nei menu disegna il contorno dentro l'opzione, senza invadere quelle vicine.
+                    insetOutline && styles.insetOutline,
                 ]
             }
         />
@@ -49,6 +51,9 @@ const styles = StyleSheet.create({
         outlineStyle: 'solid',
         outlineColor: Colors.text,
         outlineOffset: 3,
+    },
+    insetOutline: {
+        outlineOffset: -2,
     },
 });
 

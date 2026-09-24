@@ -2,18 +2,17 @@ import AppText from '@/components/ui/AppText';
 import { Colors } from '@/constants/theme';
 import { useUnits } from '@/contexts/UnitsContext';
 import { useWeather } from '@/contexts/WeatherContext';
+import useBreakpoints from '@/hooks/useBreakpoints';
 import { dayLabel, weatherIcon } from '@/services/weather';
 import { Image } from 'expo-image';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 export default function DailyForecast() {
 
     const { temperature } = useUnits();
-    const { width } = useWindowDimensions();
     const { data } = useWeather();
 
-    const isMediumScreen = width < 576;
-    const isSmallScreen = width < 375;
+    const { isXSScreen, isMediumScreen } = useBreakpoints();
 
 
     if (!data) return null;
@@ -25,17 +24,17 @@ export default function DailyForecast() {
         low: daily.temperature_2m_min[index], ...weatherIcon(daily.weather_code[index]),
     }));
 
-    const columns = isSmallScreen ? 3 : isMediumScreen ? 4 : 7;
+    const columns = isXSScreen ? 3 : isMediumScreen ? 4 : 7;
 
     const rows = Array.from(
-        { length: Math.ceil(forecast.length / columns) }, 
+        { length: Math.ceil(forecast.length / columns) },
         (_, index) => forecast.slice(index * columns, (index + 1) * columns)
     );
 
     return (
-        <View style={styles.container}>
+        <View>
 
-            <AppText style={styles.title}>Daily forecast</AppText>
+            <AppText size='header' style={styles.title}>Daily forecast</AppText>
 
             <View style={styles.rows}>
                 {
@@ -46,7 +45,7 @@ export default function DailyForecast() {
 
                                     <View key={day.date} style={styles.card}>
 
-                                        <AppText style={styles.day}>{day.day}</AppText>
+                                        <AppText color='textSecondary' style={styles.day}>{day.day}</AppText>
 
                                         <Image
                                             source={day.icon}
@@ -57,14 +56,14 @@ export default function DailyForecast() {
 
                                         <View style={styles.temperatures}>
 
-                                            <AppText style={styles.temperature} accessibilityLabel={`High ${temperature(day.high, true)}`}>
+                                            <AppText accessibilityLabel={`High ${temperature(day.high, true)}`}>
                                                 {temperature(day.high)}
                                             </AppText>
 
-                                            <AppText style={[styles.temperature, styles.low]} accessibilityLabel={`Low ${temperature(day.low, true)}`}>
+                                            <AppText color='textMuted' accessibilityLabel={`Low ${temperature(day.low, true)}`}>
                                                 {temperature(day.low)}
                                             </AppText>
-                                            
+
                                         </View>
 
                                     </View>
@@ -73,7 +72,7 @@ export default function DailyForecast() {
                             {
                                 // per evitare una card si allarghi in una riga non piena aggiungo delle card vuote
                                 Array.from(
-                                    { length: columns - row.length }, 
+                                    { length: columns - row.length },
                                     (_, index) => <View key={`empty-${index}`} style={styles.emptyCard} />
                                 )
                             }
@@ -86,12 +85,8 @@ export default function DailyForecast() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-    },
     title: {
-        color: Colors.text,
-        paddingBottom: 10,
-        fontSize: 14,
+        paddingVertical: 10,
     },
     card: {
         backgroundColor: Colors.surfaceRaised,
@@ -107,8 +102,6 @@ const styles = StyleSheet.create({
     },
     day: {
         textAlign: 'center',
-        fontSize: 14,
-        color: Colors.textMuted
     },
     icon: {
         width: 48,
@@ -121,12 +114,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 4,
-    },
-    temperature: {
-        fontSize: 12
-    },
-    low: {
-        color: Colors.textSecondary
     },
     rows: {
         gap: 12

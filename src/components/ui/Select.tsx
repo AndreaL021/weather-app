@@ -1,11 +1,11 @@
-import { Colors } from '@/constants/theme';
+import { Colors, FontSizes } from '@/constants/theme';
+import useBreakpoints from '@/hooks/useBreakpoints';
 import { Image, type ImageSource } from 'expo-image';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { Animated, Modal, Platform, Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AppText from './AppText';
 import InteractivePressable, { focusStyle } from './InteractivePressable';
-
 
 type Option = { label: string; value: string };
 
@@ -26,6 +26,8 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
     const [isOpen, setIsOpen] = useState(false);
 
     const [rotation] = useState(() => new Animated.Value(0));
+
+    const { isSmallScreen } = useBreakpoints()
 
     // animazione freccia
     useEffect(() => {
@@ -116,7 +118,7 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
                     icon && <Image source={icon} style={styles.icon} contentFit="contain" accessible={false} />
                 }
 
-                <AppText>{label}</AppText>
+                <AppText style={{ fontSize: isSmallScreen ? FontSizes.xs: FontSizes.small }}>{label}</AppText>
 
                 {/* animazione */}
                 <Animated.View style={{ transform: [{ rotate: rotation.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '180deg'] }) }] }}>
@@ -147,13 +149,14 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
                             ...(above ? { bottom: modalHeight - buttonY + 8 } : { top: buttonY + button.height + 8 }),
                         }]}
                     >
-                        
-                        <ScrollView keyboardShouldPersistTaps="handled">
+
+                        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.menuContent}>
 
                             {/* Ogni opzione comunica il nuovo valore al genitore e chiude il menu. */}
                             {
                                 options?.map(option => (
                                     <InteractivePressable
+                                        insetOutline
                                         key={option.value}
                                         accessibilityRole="button"
                                         accessibilityState={{ selected: option.value === value }}
@@ -161,7 +164,7 @@ export default function Select({ label, accessibilityLabel, icon, variant = 'sur
                                         style={({ pressed }) => [styles.option, option.value === value && styles.selected, pressed && styles.pressed]}
                                     >
 
-                                        <AppText>{option.label}</AppText>
+                                        <AppText style={{ fontSize: isSmallScreen ? FontSizes.xs: FontSizes.small }}>{option.label}</AppText>
                                         {
                                             option.value === value && <Image source={require('@/assets/images/icon-checkmark.svg')} style={styles.check} accessible={false} />
                                         }
@@ -195,11 +198,14 @@ const styles = StyleSheet.create({
     },
     menu: {
         position: 'absolute',
-        padding: 8,
         borderRadius: 8,
         backgroundColor: Colors.surface,
         borderWidth: 1,
         borderColor: Colors.border
+    },
+    menuContent: {
+        // Lascia spazio al contorno delle opzioni dentro l'area scorrevole.
+        padding: 8,
     },
     button: {
         flexDirection: 'row',

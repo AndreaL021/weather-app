@@ -1,7 +1,7 @@
-import { Colors, Fonts } from '@/constants/theme';
-import { isLoaded } from 'expo-font';
+import { Colors } from '@/constants/theme';
 import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import AppText from './AppText';
 import InteractivePressable from './InteractivePressable';
 
 type Props = {
@@ -55,9 +55,9 @@ function ToastMessage({ message, variant = 'primary', duration = 4000 }: Props) 
         >
 
             {/* Se i font non sono disponibili, usa il carattere di sistema. */}
-            <Text style={[styles.message, isLoaded(Fonts.body) && styles.font, variant === 'warning' && styles.warningText]}>
+            <AppText style={styles.message}>
                 {message}
-            </Text>
+            </AppText>
 
             {/* chiudi */}
             <InteractivePressable
@@ -67,7 +67,7 @@ function ToastMessage({ message, variant = 'primary', duration = 4000 }: Props) 
                 hoverStyle={styles.close}
                 style={({ pressed }) => [styles.close, pressed && styles.pressed]}
             >
-                <Text style={[styles.closeText, variant === 'warning' && styles.warningText]}>×</Text>
+                <AppText style={styles.closeText}>×</AppText>
             </InteractivePressable>
 
         </View>
@@ -101,14 +101,6 @@ const styles = StyleSheet.create({
     },
     message: {
         flex: 1,
-        color: Colors.text,
-        fontSize: 12,
-    },
-    font: {
-        fontFamily: Fonts.body,
-    },
-    warningText: {
-        color: Colors.text,
     },
     close: {
         width: 44,
@@ -118,7 +110,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     closeText: {
-        color: Colors.text,
         fontSize: 20,
     },
     pressed: {

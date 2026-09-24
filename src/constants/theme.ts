@@ -46,4 +46,20 @@ export const FontAssets = {
   [Fonts.heading]: require('../../assets/fonts/Bricolage_Grotesque/static/BricolageGrotesque-Bold.ttf'),
 };
 
-export const FontSizes = { body: 18 } as const;
+export const FontSizes = {
+  xs: 14,
+  small: 16,
+  medium: 18,
+  large: 20,
+  xl: 22,
+  xxl: 24
+} as const;
+
+export const Breakpoints = {
+  xs: 400,
+  small: 600,
+  medium: 800,
+  large: 1000,
+  xl: 1200,
+  xxl: 1600,
+} as const;

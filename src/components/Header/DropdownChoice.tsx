@@ -7,10 +7,11 @@ import InteractivePressable from '../ui/InteractivePressable';
 type Props = { label: string; selected: boolean; onPress: () => void };
 
 export default function DropdownChoice({ label, selected, onPress }: Props) {
-    
+
     return (
 
         <InteractivePressable
+            insetOutline
             accessibilityRole="radio"
             accessibilityState={{ checked: selected }}
             onPress={onPress}

@@ -1,17 +1,17 @@
-import { Colors, Fonts } from '@/constants/theme';
+import { Colors, Fonts, FontSizes } from '@/constants/theme';
 import { useWeather } from '@/contexts/WeatherContext';
+import useBreakpoints from '@/hooks/useBreakpoints';
 import { cityLabel, searchCities, type City } from '@/services/citySearch';
 import { Image } from 'expo-image';
 import { useEffect, useRef, useState } from 'react';
 import type { TextStyle } from 'react-native';
-import { Keyboard, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, TextInput, View, useWindowDimensions } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import AppText from './ui/AppText';
 import InteractivePressable, { focusStyle } from './ui/InteractivePressable';
 
-
-// Proprietà CSS applicate solo all'input web, senza modificare global.css.
-// I tipi nativi non includono outlineStyle: 'none' e caretColor del browser.
+// Proprietà CSS applicate solo all'input web per rimuovere 
+// contorno input di default quando si attiva il focus
 const webInputStyle = {
     outlineStyle: 'none' as const,
     caretColor: Colors.text,
@@ -31,13 +31,12 @@ export default function SearchBar() {
     const [highlighted, setHighlighted] = useState(0);
     const [result, setResult] = useState<{ query: string; cities: City[]; error: boolean } | null>(null);
 
-    const { width } = useWindowDimensions();
 
     const { selectCity } = useWeather();
 
-    const isSmallScreen = width < 400;
+    const { isSmallScreen, isMediumScreen, isXLScreen } = useBreakpoints();
 
-    const useSearchModal = Platform.OS !== 'web' || width < 600;
+    const useSearchModal = Platform.OS !== 'web' || isSmallScreen;
 
 
     const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -162,7 +161,18 @@ export default function SearchBar() {
 
     // Riutilizza lo stesso campo e gli stessi risultati nel modal e nella pagina desktop.
     const searchForm = (
-        <View style={[styles.row, useSearchModal ? styles.modalForm : isSmallScreen ? styles.mobileRow : styles.desktopRow]}>
+        <View
+            style={[
+                styles.row,
+                useSearchModal
+                    ? styles.modalForm : isMediumScreen
+                        ? styles.mobileRow : styles.desktopRow,
+                { width: isMediumScreen ? "100%" : isXLScreen ? '70%' : '50%' }
+            ]}
+        >
+
+            {/* pulsante mobile */}
+            {!useSearchModal && isMediumScreen && searchButton}
 
             <View style={[styles.inputColumn, !useSearchModal && !isSmallScreen && styles.desktopInput]}>
                 <View
@@ -193,7 +203,11 @@ export default function SearchBar() {
                         onKeyPress={event => {
                             const key = event.nativeEvent.key;
                             if (key === 'Escape') closeSearch();
-                            if (showResults && cities.length && (key === 'ArrowDown' || key === 'ArrowUp')) {
+                            if (
+                                showResults
+                                && cities.length
+                                && (key === 'ArrowDown' || key === 'ArrowUp')
+                            ) {
                                 event.preventDefault();
                                 setHighlighted(index => (index + (key === 'ArrowDown' ? 1 : -1) + cities.length) % cities.length);
                             }
@@ -241,6 +255,7 @@ export default function SearchBar() {
                                 ) : cities.map((city, index) => (
 
                                     <InteractivePressable
+                                        insetOutline
                                         key={city.id}
                                         onPress={() => chooseCity(city)}
                                         onFocus={() => {
@@ -263,18 +278,24 @@ export default function SearchBar() {
                 }
             </View>
 
-            {!useSearchModal && searchButton}
-
+            {/* pulsante desktop */}
+            {!useSearchModal && !isMediumScreen && searchButton}
         </View>
     );
 
 
+    // return searchform senza modal su schermi grandi
     if (!useSearchModal) return searchForm;
 
-    // modal (mobile)
+    // mobile
     return (
         <>
-            <View style={[styles.row, isSmallScreen ? styles.mobileRow : styles.desktopRow]}>
+            <View style={[
+                styles.row,
+                isMediumScreen ? styles.mobileRow : styles.desktopRow,
+                { width: isMediumScreen ? "100%" : isXLScreen ? '70%' : '50%' }
+            ]}
+            >
 
                 <InteractivePressable
                     onPress={openSearch}
@@ -285,12 +306,13 @@ export default function SearchBar() {
 
                     <Image source={require('@/assets/images/icon-search.svg')} style={styles.magnify} contentFit="contain" accessible={false} />
 
-                    <AppText numberOfLines={1} style={styles.triggerText}>{query || 'Search for a place...'}</AppText>
+                    <AppText color='textMuted' numberOfLines={1}>{query || 'Search for a place...'}</AppText>
 
                 </InteractivePressable>
 
             </View>
 
+            {/* modal */}
             <Modal
                 visible={modalOpen}
                 animationType="slide"
@@ -308,7 +330,11 @@ export default function SearchBar() {
 
                             <View style={styles.modalHeader}>
 
-                                <AppText accessibilityRole="header" style={styles.modalTitle}>Search for a place</AppText>
+                                <AppText
+                                    accessibilityRole="header"
+                                    size='title'
+                                    style={styles.modalTitle}
+                                >Search for a place</AppText>
 
                                 <InteractivePressable
                                     onPress={closeSearch}
@@ -317,7 +343,7 @@ export default function SearchBar() {
                                     style={styles.closeButton}
                                 >
 
-                                    <AppText style={styles.closeText}>×</AppText>
+                                    <AppText style={styles.closeIcon}>×</AppText>
 
                                 </InteractivePressable>
 
@@ -373,12 +399,10 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        gap: 12,
+        paddingLeft: 20,
     },
     modalTitle: {
         flexShrink: 1,
-        fontSize: 20,
     },
     closeButton: {
         minWidth: 44,
@@ -387,42 +411,36 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 8,
     },
-    closeText: {
-        fontSize: 28,
+    closeIcon: {
+        fontSize: 40,
     },
     modalContent: {
-        padding: 20,
+        padding: 10,
+        paddingHorizontal: 20,
     },
     modalForm: {
         width: '100%',
         marginTop: 0,
-        flexDirection: 'column',
     },
     searchTrigger: {
         minHeight: 44,
-    },
-    triggerText: {
-        flex: 1,
-        color: Colors.textMuted,
-        fontSize: 12,
     },
     row: {
         zIndex: 3,
         marginTop: 20,
         alignSelf: 'center',
+        justifyContent: 'center',
         gap: 12,
     },
     mobileRow: {
-        width: '100%',
         flexDirection: 'column',
     },
     desktopRow: {
-        width: '50%',
         minWidth: 350,
         flexDirection: 'row',
     },
     container: {
-        minHeight: 40,
+        minHeight: 50,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
@@ -440,7 +458,7 @@ const styles = StyleSheet.create({
     },
     results: {
         marginTop: 8,
-        padding: 4,
+        padding: 8,
         borderRadius: 8,
         backgroundColor: Colors.surface,
         borderWidth: 1,
@@ -462,7 +480,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.surfaceRaised,
     },
     resultPressed: {
-        backgroundColor: Colors.border,
+        backgroundColor: 'hsl(243, 27%, 16%)',
     },
     resultMessage: {
         padding: 10,
@@ -506,7 +524,7 @@ const styles = StyleSheet.create({
         minWidth: 0,
         color: Colors.text,
         fontFamily: Fonts.body,
-        fontSize: 12
+        fontSize: FontSizes.medium,
     },
     magnify: {
         width: 15,

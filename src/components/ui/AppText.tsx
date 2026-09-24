@@ -1,17 +1,33 @@
-// componente text con fontfamily e fontsize impostati di default
-
+// Testo con carattere e dimensioni responsive condivisi tra le pagine.
+import { Colors, Fonts, FontSizes, type ThemeColor } from '@/constants/theme';
+import useBreakpoints from '@/hooks/useBreakpoints';
 import { StyleSheet, Text, type TextProps } from 'react-native';
 
-import { Colors, Fonts } from '@/constants/theme';
+type AppTextProps = TextProps & {
+    size?: 'body' | 'header' | 'title';
+    color?: ThemeColor;
+};
 
-export default function AppText({ style, ...props }: TextProps) {
-  return <Text {...props} style={[styles.text, style]} />;
+export default function AppText({ size = 'body', color = 'text', style, ...props }: AppTextProps) {
+
+    const { isSmallScreen, isMediumScreen, isXXLScreen } = useBreakpoints();
+
+    // Tutte le dimensioni si regolano qui: sotto 600, sotto 800 e da 800 in poi.
+    const sizes = {
+        body: isMediumScreen ? FontSizes.small : isXXLScreen ? FontSizes.large : FontSizes.medium,
+        header: isMediumScreen ? FontSizes.medium : isXXLScreen ? FontSizes.xl : FontSizes.large,
+        title: isMediumScreen ? FontSizes.large : isXXLScreen ? FontSizes.xxl : FontSizes.xl,
+    };
+
+    return <Text {...props} style={[
+        styles.text,
+        { fontSize: sizes[size], color: Colors[color] },
+        style,
+    ]} />;
 }
 
 const styles = StyleSheet.create({
     text: {
         fontFamily: Fonts.body,
-        color: Colors.text,
-        fontSize: 12
     },
 });
