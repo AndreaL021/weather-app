@@ -1,5 +1,5 @@
-import { Colors } from '@/constants/theme';
 import InteractivePressable from '@/components/ui/InteractivePressable';
+import { Colors } from '@/constants/theme';
 import { Image } from 'expo-image';
 import type { ErrorBoundaryProps } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -8,16 +8,16 @@ import { ScrollView, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AppErrorBoundary({ retry }: ErrorBoundaryProps) {
-    
+
 
     useEffect(() => {
 
         // Rende visibile l'errore anche se si verifica prima della fine del caricamento iniziale.
         SplashScreen.hideAsync();
-        
+
     }, []);
 
-    
+
     return (
 
         <SafeAreaView style={styles.screen}>
@@ -42,7 +42,7 @@ export default function AppErrorBoundary({ retry }: ErrorBoundaryProps) {
 
                     <Image source={require('../../assets/images/icon-retry.svg')} style={styles.retryIcon} contentFit="contain" accessible={false} />
                     <Text style={styles.buttonText}>Retry</Text>
-                    
+
                 </InteractivePressable>
 
             </ScrollView>
@@ -65,15 +65,13 @@ const styles = StyleSheet.create({
     },
     title: {
         color: Colors.text,
-        fontSize: 32,
+        fontSize: 40,
         fontWeight: 'bold',
         textAlign: 'center',
     },
     description: {
         color: Colors.textSecondary,
-        fontSize: 18,
-        textAlign: 'center',
-        maxWidth: 550,
+        fontSize: 18
     },
     button: {
         flexDirection: 'row',
@@ -86,14 +84,14 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: Colors.text,
-        fontSize: 14,
+        fontSize: 18,
     },
     errorIcon: {
-        width: 40,
-        height: 40,
+        width: 60,
+        height: 60,
     },
     retryIcon: {
-        width: 16,
-        height: 16,
+        width: 20,
+        height: 20,
     },
 });

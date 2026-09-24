@@ -1,13 +1,14 @@
 import { Colors, Fonts } from '@/constants/theme';
+import useBreakpoints from '@/hooks/useBreakpoints';
 import { Image } from 'expo-image';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import AppText from './ui/AppText';
 import InteractivePressable from './ui/InteractivePressable';
 
+
 export default function WeatherError({ onRetry }: { onRetry: () => void }) {
 
-    const { width } = useWindowDimensions();
-    const isSmallScreen = width < 600;
+    const { isSmallScreen } = useBreakpoints();
 
     return (
         <View style={[styles.container, isSmallScreen && styles.compact]} accessibilityLiveRegion="polite">
@@ -23,7 +24,7 @@ export default function WeatherError({ onRetry }: { onRetry: () => void }) {
                 Something went wrong
             </AppText>
 
-            <AppText style={styles.description}>
+            <AppText color="textSecondary" size='header'>
                 We couldn’t connect to the server (API error). Please try again in a few moments.
             </AppText>
 
@@ -41,8 +42,8 @@ export default function WeatherError({ onRetry }: { onRetry: () => void }) {
                     accessible={false}
                 />
 
-                <AppText style={styles.buttonText}>Retry</AppText>
-                
+                <AppText>Retry</AppText>
+
             </InteractivePressable>
         </View>
     );
@@ -53,7 +54,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'center',
         width: '100%',
-        maxWidth: 720,
         paddingTop: 100,
         paddingBottom: 32,
         gap: 24
@@ -62,18 +62,12 @@ const styles = StyleSheet.create({
         paddingTop: 64
     },
     errorIcon: {
-        width: 40,
-        height: 40,
+        width: 60,
+        height: 60,
     },
     title: {
         fontFamily: Fonts.bodyBold,
-        fontSize: 32,
-        textAlign: 'center'
-    },
-    description: {
-        maxWidth: 550,
-        fontSize: 18,
-        color: Colors.textSecondary,
+        fontSize: 40,
         textAlign: 'center'
     },
     button: {
@@ -89,10 +83,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'hsl(243, 27%, 16%)'
     },
     retryIcon: {
-        width: 16,
-        height: 16
-    },
-    buttonText: {
-        fontSize: 14
+        width: 20,
+        height: 20,
     },
 });

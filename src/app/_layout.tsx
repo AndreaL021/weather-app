@@ -1,5 +1,10 @@
 import '@/global.css';
 
+import AppErrorBoundary from '@/components/AppErrorBoundary';
+import Toast from '@/components/ui/Toast';
+import { Colors, FontAssets } from '@/constants/theme';
+import UnitsProvider from '@/contexts/UnitsContext';
+import WeatherProvider, { useWeather } from '@/contexts/WeatherContext';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -7,24 +12,16 @@ import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { Colors, FontAssets } from '@/constants/theme';
-
-import AppErrorBoundary from '@/components/AppErrorBoundary';
-import Toast from '@/components/ui/Toast';
-import UnitsProvider from '@/contexts/UnitsContext';
-import WeatherProvider, { useWeather } from '@/contexts/WeatherContext';
 
 // Expo Router usa questa schermata se il layout o i componenti figli generano un errore imprevisto.
 export const ErrorBoundary = AppErrorBoundary;
-// Mantiene visibile la schermata iniziale mentre vengono caricati i font.
-SplashScreen.preventAutoHideAsync();
 
 
 export default function RootLayout() {
 
     // Carica i font definiti nel tema e controlla se il caricamento termina o fallisce.
     const [fontsLoaded, fontError] = useFonts(FontAssets);
-
+    
 
     useEffect(() => {
 
