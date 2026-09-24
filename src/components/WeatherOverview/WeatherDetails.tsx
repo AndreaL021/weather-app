@@ -30,7 +30,7 @@ export default function WeatherDetails() {
 
                 </AppText>
 
-                <AppText>
+                <AppText size='title' style={{ marginTop: 10 }}>
 
                     {temperature(current.apparent_temperature, true)}
 
@@ -46,7 +46,7 @@ export default function WeatherDetails() {
 
                 </AppText>
 
-                <AppText>
+                <AppText size='title' style={{ marginTop: 10 }}>
 
                     {current.relative_humidity_2m}%
 
@@ -62,7 +62,7 @@ export default function WeatherDetails() {
 
                 </AppText>
 
-                <AppText>
+                <AppText size='title' style={{ marginTop: 10 }}>
 
                     {wind(current.wind_speed_10m)}
 
@@ -77,7 +77,7 @@ export default function WeatherDetails() {
                     Precipitation
 
                 </AppText>
-                <AppText>
+                <AppText size='title' style={{ marginTop: 10 }}>
 
                     {precipitation(current.precipitation)}
 
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     },
     largeCard: {
         minHeight: 110,
-        paddingHorizontal: 30,
+        paddingHorizontal: 10,
         paddingVertical: 15,
     },
     grid: {
