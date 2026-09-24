@@ -61,7 +61,7 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
                         // card scrollabile per mantenere le dimensioni desktop
                         <ScrollView
                             key={activeDay}
-                            style={styles.fill}
+                            style={[styles.fill, {paddingRight:10}]}
                             contentContainerStyle={styles.hours}
                             keyboardShouldPersistTaps="handled"
                             showsVerticalScrollIndicator

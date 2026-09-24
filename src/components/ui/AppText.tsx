@@ -10,9 +10,9 @@ type AppTextProps = TextProps & {
 
 export default function AppText({ size = 'body', color = 'text', style, ...props }: AppTextProps) {
 
-    const { isSmallScreen, isMediumScreen, isXXLScreen } = useBreakpoints();
+    const { isMediumScreen, isXXLScreen } = useBreakpoints();
 
-    // Tutte le dimensioni si regolano qui: sotto 600, sotto 800 e da 800 in poi.
+    // Tutte le dimensioni.
     const sizes = {
         toast: isMediumScreen ? FontSizes.xs : isXXLScreen ? FontSizes.medium : FontSizes.small,
         body: isMediumScreen ? FontSizes.small : isXXLScreen ? FontSizes.large : FontSizes.medium,
