@@ -24,7 +24,7 @@ export default function CurrentWeather() {
     });
 
     return (
-        <View style={[styles.container, { paddingVertical: isXXLScreen ? 100 : 50 }]}>
+        <View style={[styles.container, { paddingVertical: isXXLScreen ? 60 : 30 }]}>
 
             {/* Immagine di sfondo */}
             <Image
@@ -57,12 +57,12 @@ export default function CurrentWeather() {
                     {/* icona meteo */}
                     <Image
                         source={icon.icon}
-                        style={[styles.image, { aspectRatio: isXSScreen ? 0.6 : 1, width: isSmallScreen ? 70 : 100 }]}
+                        style={[styles.image, { aspectRatio: isXSScreen ? 0.6 : 1, width: isSmallScreen ? 120 : 180 }]}
                         contentFit="contain"
                         accessibilityLabel={icon.condition}
                     />
 
-                    <AppText style={{ fontSize: 60 }}>
+                    <AppText style={{ fontSize: 80 }}>
                         {/* Temperatura */}
                         {temperature(current.temperature_2m)}
 
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     container: {
-        padding: 16,
+        paddingHorizontal: 25,
         borderRadius: 12,
         overflow: 'hidden',
     },

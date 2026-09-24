@@ -104,7 +104,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     icon: {
-        width: 48,
+        width: 60,
+        height: 60,
         maxWidth: '100%',
         aspectRatio: 1
     },

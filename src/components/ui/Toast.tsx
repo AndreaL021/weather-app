@@ -55,7 +55,7 @@ function ToastMessage({ message, variant = 'primary', duration = 4000 }: Props) 
         >
 
             {/* Se i font non sono disponibili, usa il carattere di sistema. */}
-            <AppText style={styles.message}>
+            <AppText size="toast" style={styles.message}>
                 {message}
             </AppText>
 
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     closeText: {
-        fontSize: 20,
+        fontSize: 40,
     },
     pressed: {
         opacity: 0.6,

@@ -3,12 +3,13 @@ import Select from '@/components/ui/Select';
 import { Colors } from '@/constants/theme';
 import { useUnits } from '@/contexts/UnitsContext';
 import { useWeather } from '@/contexts/WeatherContext';
-import useBreakpoints from '@/hooks/useBreakpoints';
-
 import { dayLabel, weatherIcon } from '@/services/weather';
 import { Image } from 'expo-image';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
+
+
+
 
 export default function HourlyForecast({ fillHeight = false }: { fillHeight?: boolean }) {
 
@@ -22,7 +23,6 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
     const { daily, hourly } = data.weather;
     const dayOptions = daily.time.map(date => ({ value: date, label: dayLabel(date, true) }));
     const activeDay = daily.time.includes(selectedDay) ? selectedDay : daily.time[0];
-    const { isSmallScreen } = useBreakpoints();
 
     const hourlyForecast = hourly.time.map((time, index) => {
 
@@ -69,7 +69,7 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
                             {
                                 hourlyForecast.map(hour => (
 
-                                    <View key={hour.dateTime} style={[styles.card, { padding: 10 }]}>
+                                    <View key={hour.dateTime} style={[styles.card, { padding: 5 }]}>
 
                                         <View style={styles.hour}>
 
@@ -92,7 +92,7 @@ export default function HourlyForecast({ fillHeight = false }: { fillHeight?: bo
                             {
                                 hourlyForecast.map(hour => (
 
-                                    <View key={hour.dateTime} style={[styles.card, { padding: isSmallScreen ? 5 : 10 }]}>
+                                    <View key={hour.dateTime} style={[styles.card, { padding: 5}]}>
 
                                         <View style={styles.hour}>
 
@@ -138,8 +138,8 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     icon: {
-        width: 28,
-        height: 28,
+        width: 40,
+        height: 40,
     },
     container: {
         padding: 10,
